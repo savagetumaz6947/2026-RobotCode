@@ -7,6 +7,10 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,7 +26,6 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intakepivot.IntakePivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.util.sim.MapleSimSwerveDrivetrain;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -118,6 +121,9 @@ public class RobotContainer {
     // Initialize superstructure
     superstructure = new Superstructure(shooter, intake, intakePivot, conveyor);
 
+    // Register named commands for autonomous routines
+    registerNamedCommands();
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -180,6 +186,15 @@ public class RobotContainer {
                         new edu.wpi.first.math.geometry.Pose2d(
                             swerveIO.getPose().getTranslation(),
                             new edu.wpi.first.math.geometry.Rotation2d()))));
+  }
+
+  /** Register named commands for PathPlanner autonomous routines. */
+  private void registerNamedCommands() {
+    NamedCommands.registerCommand("intake", superstructure.intake());
+    NamedCommands.registerCommand("prepareShoot", superstructure.prepareShoot());
+    NamedCommands.registerCommand("shoot", superstructure.shoot());
+    NamedCommands.registerCommand("emergencyStop", superstructure.emergencyStop());
+    NamedCommands.registerCommand("idle", superstructure.idle());
   }
 
   /**
