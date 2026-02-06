@@ -15,10 +15,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private final MotionMagicDutyCycle leftPositionControl = new MotionMagicDutyCycle(0);
 
   public IntakePivotIOTalonFX() {
-    rightPivotMotor =
-        new TalonFX(IntakePivotConstants.RIGHT_MOTOR_CAN_ID);
-    leftPivotMotor =
-        new TalonFX(IntakePivotConstants.LEFT_MOTOR_CAN_ID);
+    rightPivotMotor = new TalonFX(IntakePivotConstants.RIGHT_MOTOR_CAN_ID);
+    leftPivotMotor = new TalonFX(IntakePivotConstants.LEFT_MOTOR_CAN_ID);
 
     // Create base configuration shared by both motors
     TalonFXConfiguration config = new TalonFXConfiguration();
