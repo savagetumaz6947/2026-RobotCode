@@ -133,7 +133,7 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
           this::runVelocity,
           new PPHolonomicDriveController(
             new PIDConstants(5.0, 0.0, 0.0), // translation
-            new PIDConstants(5.0, 0.0, 0.0), // rotation
+            new PIDConstants(5.0, 0.0, 0.0) // rotation
           ),
           config,
           () -> false, // alliance flipping
