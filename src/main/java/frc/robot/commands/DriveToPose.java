@@ -7,7 +7,10 @@
 
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -20,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.DriveSwerveDrivetrain;
-import org.littletonrobotics.junction.Logger;
 
 public class DriveToPose extends Command {
   private final DriveSwerveDrivetrain drive;
