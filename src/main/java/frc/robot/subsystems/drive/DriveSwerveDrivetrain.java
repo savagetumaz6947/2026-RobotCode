@@ -16,6 +16,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 
@@ -37,9 +38,9 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // Update chassis speeds in RobotState
-    var speeds = driveIO.getState().Speeds;
-    robotState.updateChassisSpeeds(speeds, speeds); // Field and robot relative are same from CTRE
-
+    var robotRelativeSpeed = driveIO.getState().Speeds;
+    var fieldRelativeSpeed = ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeSpeed,getPose().getRotation());
+    robotState.updateChassisSpeeds(fieldRelativeSpeed, robotRelativeSpeed); 
     // Log robot state
     robotState.log();
 
@@ -54,7 +55,7 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
     if (robotState.getLatestFieldToRobot() != null) {
       return robotState.getLatestFieldToRobot().getValue();
     }
-    return new Pose2d(); // Fallback
+    return driveIO.getState().Pose; // Fallback
   }
 
   /** Get RobotState object for commands */
@@ -124,23 +125,25 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
 
   private void configureAutoBuilder() {
     try {
-        RobotConfig config = RobotConfig.fromGUISettings();
+      RobotConfig config = RobotConfig.fromGUISettings();
 
-        AutoBuilder.configure(
-          this::getPose,
-          this::resetPose,
-          this::getRobotRelativeSpeeds,
-          this::runVelocity,
-          new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), // translation
-            new PIDConstants(5.0, 0.0, 0.0) // rotation
-          ),
-          config,
-          () -> false, // alliance flipping
-          this
-        );
+      AutoBuilder.configure(
+        this::getPose,
+        this::resetPose,
+        this::getRobotRelativeSpeeds,
+        this::runVelocity,
+        new PPHolonomicDriveController(
+          new PIDConstants(5.0, 0.0, 0.0), // translation
+          new PIDConstants(5.0, 0.0, 0.0) // rotation
+        ),
+        config,
+        () -> DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Red, // isRedAlliance
+        this
+      );
+
+      System.out.println("AutoBuilder configured successfully");
     } catch (Exception e) {
-      System.err.println("Autobuilder configuration failed");
+      System.err.println("AutoBuilder configuration failed");
       e.printStackTrace();
     }
   }

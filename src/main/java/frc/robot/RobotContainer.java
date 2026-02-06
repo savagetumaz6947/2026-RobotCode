@@ -10,6 +10,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -88,8 +89,7 @@ public class RobotContainer {
                 robotState);
         break;
 
-      default:
-        // For replay, create minimal DriveIOHardware
+      case REPLAY:
         swerveIO =
             new DriveSwerveDrivetrain(
                 new DriveIOHardware(
@@ -101,11 +101,10 @@ public class RobotContainer {
                     TunerConstants.BackRight),
                 robotState);
         break;
+      
+      default:
+        throw new IllegalStateException("Unexpected mode: " + Constants.currentMode);
     }
-
-    // Set up auto routines - disabled until DriveCommands are updated
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     // Initialize subsystems
     intake = IntakeSubsystem.getInstance();
@@ -118,6 +117,10 @@ public class RobotContainer {
 
     // Register named commands for autonomous routines
     registerNamedCommands();
+
+    // Set up auto routines
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -178,6 +181,7 @@ public class RobotContainer {
 
   /** Register named commands for PathPlanner autonomous routines. */
   private void registerNamedCommands() {
+    NamedCommands.registerCommand("ResetPoseToStart", Commands.runOnce(() -> swerveIO.resetPose(new Pose2d())));
     NamedCommands.registerCommand("Intake", superstructure.intake());
     NamedCommands.registerCommand("PrepareShoot", superstructure.prepareShoot());
     NamedCommands.registerCommand("Shoot", superstructure.shoot());
