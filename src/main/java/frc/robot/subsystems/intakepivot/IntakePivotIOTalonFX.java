@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+
 import frc.robot.Constants.IntakePivotConstants;
 
 public class IntakePivotIOTalonFX implements IntakePivotIO {
@@ -15,9 +16,9 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
 
   public IntakePivotIOTalonFX() {
     rightPivotMotor =
-        new TalonFX(IntakePivotConstants.RIGHT_MOTOR_CAN_ID, IntakePivotConstants.CAN_BUS);
+        new TalonFX(IntakePivotConstants.RIGHT_MOTOR_CAN_ID);
     leftPivotMotor =
-        new TalonFX(IntakePivotConstants.LEFT_MOTOR_CAN_ID, IntakePivotConstants.CAN_BUS);
+        new TalonFX(IntakePivotConstants.LEFT_MOTOR_CAN_ID);
 
     // Create base configuration shared by both motors
     TalonFXConfiguration config = new TalonFXConfiguration();
