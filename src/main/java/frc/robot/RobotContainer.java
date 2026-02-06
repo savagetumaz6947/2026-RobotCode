@@ -7,12 +7,13 @@
 
 package frc.robot;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -49,11 +50,9 @@ public class RobotContainer {
   private final CommandXboxController controller = new CommandXboxController(0);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Regulate module constants for simulation (254's approach)
     if (Constants.currentMode == Constants.Mode.SIM) {
       MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(
           new com.ctre.phoenix6.swerve.SwerveModuleConstants<?, ?, ?>[] {
@@ -66,7 +65,6 @@ public class RobotContainer {
 
     switch (Constants.currentMode) {
       case REAL:
-        // Real robot, use CTRE SwerveDrivetrain directly (254's approach)
         swerveIO =
             new DriveSwerveDrivetrain(
                 new DriveIOHardware(
@@ -80,7 +78,6 @@ public class RobotContainer {
         break;
 
       case SIM:
-        // Sim robot, use DriveIOSim with Maple-Sim integration (254's approach)
         swerveIO =
             new DriveSwerveDrivetrain(
                 new DriveIOSim(
@@ -109,8 +106,8 @@ public class RobotContainer {
     }
 
     // Set up auto routines - disabled until DriveCommands are updated
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices");
-    autoChooser.addDefaultOption("Do Nothing", Commands.none());
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     // Initialize subsystems
     intake = IntakeSubsystem.getInstance();
@@ -128,14 +125,7 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
   private void configureButtonBindings() {
-    // Default command, field-relative drive using 254's approach
     swerveIO.setDefaultCommand(
         Commands.run(
             () -> {
@@ -190,11 +180,11 @@ public class RobotContainer {
 
   /** Register named commands for PathPlanner autonomous routines. */
   private void registerNamedCommands() {
-    NamedCommands.registerCommand("intake", superstructure.intake());
-    NamedCommands.registerCommand("prepareShoot", superstructure.prepareShoot());
-    NamedCommands.registerCommand("shoot", superstructure.shoot());
-    NamedCommands.registerCommand("emergencyStop", superstructure.emergencyStop());
-    NamedCommands.registerCommand("idle", superstructure.idle());
+    NamedCommands.registerCommand("Intake", superstructure.intake());
+    NamedCommands.registerCommand("PrepareShoot", superstructure.prepareShoot());
+    NamedCommands.registerCommand("Shoot", superstructure.shoot());
+    NamedCommands.registerCommand("Eject", superstructure.eject());
+    NamedCommands.registerCommand("Idle", superstructure.idle());
   }
 
   /**

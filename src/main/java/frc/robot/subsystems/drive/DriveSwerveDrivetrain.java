@@ -9,16 +9,16 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.RobotState;
 
-/**
- * Simple Drive subsystem that wraps DriveIOHardware/DriveIOSim (which extend SwerveDrivetrain).
- * This matches Team 254's architecture of using CTRE's SwerveDrivetrain class directly.
- */
 public class DriveSwerveDrivetrain extends SubsystemBase {
   private final DriveIOHardware driveIO;
   private final RobotState robotState;
@@ -30,6 +30,8 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
   public DriveSwerveDrivetrain(DriveIOHardware driveIO, RobotState robotState) {
     this.driveIO = driveIO;
     this.robotState = robotState;
+
+    configureAutoBuilder();
   }
 
   @Override
@@ -65,6 +67,10 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
     driveIO.resetOdometry(pose);
   }
 
+  public void resetPose(Pose2d pose) {
+    setPose(pose);
+  }
+
   /**
    * Drive the robot in field-relative mode.
    *
@@ -89,6 +95,10 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
         robotCentricDrive.withVelocityX(vx).withVelocityY(vy).withRotationalRate(omega));
   }
 
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return driveIO.getState().Speeds;
+  }
+
   /** Drive using chassis speeds. */
   public void runVelocity(ChassisSpeeds chassisSpeeds) {
     driveRobotRelative(
@@ -110,5 +120,28 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
   /** Get the underlying DriveIO instance. */
   public DriveIOHardware getDriveIO() {
     return driveIO;
+  }
+
+  private void configureAutoBuilder() {
+    try {
+        RobotConfig config = RobotConfig.fromGUISettings();
+
+        AutoBuilder.configureHolonomic(
+          this::getPose,
+          this::resetPose,
+          this::getRobotRelativeSpeeds,
+          this::runVelocity,
+          new PPHolonomicDriveController(
+            new PIDConstants(5.0, 0.0, 0.0), // translation
+            new PIDConstants(5.0, 0.0, 0.0), // rotation
+          ),
+          config,
+          () -> false, // alliance flipping
+          this
+        );
+    } catch (Exception e) {
+      System.err.println("Autobuilder configuration failed");
+      e.printStackTrace();
+    }
   }
 }
