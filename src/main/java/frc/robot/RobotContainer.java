@@ -9,14 +9,17 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.conveyor.ConveyorSubsystem;
 import frc.robot.subsystems.drive.DriveIOHardware;
 import frc.robot.subsystems.drive.DriveIOSim;
@@ -42,6 +45,7 @@ public class RobotContainer {
   private final IntakePivotSubsystem intakePivot;
   private final ShooterSubsystem shooter;
   private final ConveyorSubsystem conveyor;
+  private final ClimberSubsystem climber;
   private final Superstructure superstructure;
 
   // Controller
@@ -88,7 +92,8 @@ public class RobotContainer {
                 robotState);
         break;
 
-      case REPLAY:
+      default:
+        // For replay, create minimal DriveIOHardware
         swerveIO =
             new DriveSwerveDrivetrain(
                 new DriveIOHardware(
@@ -100,9 +105,6 @@ public class RobotContainer {
                     TunerConstants.BackRight),
                 robotState);
         break;
-
-      default:
-        throw new IllegalStateException("Unexpected mode: " + Constants.currentMode);
     }
 
     // Initialize subsystems
@@ -110,6 +112,7 @@ public class RobotContainer {
     intakePivot = IntakePivotSubsystem.getInstance();
     conveyor = ConveyorSubsystem.getInstance();
     shooter = ShooterSubsystem.getInstance();
+    climber = ClimberSubsystem.getInstance();
 
     // Initialize superstructure
     superstructure = new Superstructure(shooter, intake, intakePivot, conveyor);
@@ -140,8 +143,8 @@ public class RobotContainer {
                   edu.wpi.first.math.MathUtil.applyDeadband(
                       -controller.getRightX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
 
-              double vxMetersPerSec = leftY * 5.0; // Max 5 m/s
-              double vyMetersPerSec = leftX * 5.0;
+              double vxMetersPerSec = leftY * 1.0; // Max 5 m/s
+              double vyMetersPerSec = leftX * 1.0;
               double omegaRadPerSec = rightX * Math.PI; // Max PI rad/s
               swerveIO.driveFieldRelative(vxMetersPerSec, vyMetersPerSec, omegaRadPerSec);
             },
@@ -154,11 +157,15 @@ public class RobotContainer {
     // X button: Prepare to shoot (spin up shooter, stow intake)
     controller.x().onTrue(superstructure.prepareShoot());
 
-    // Right trigger: Shoot while held, return to prepare shoot when released
-    controller
-        .rightTrigger()
-        .whileTrue(superstructure.shoot())
-        .onFalse(superstructure.prepareShoot());
+    // Right trigger: Shoot while held, start conveyer when shooter ready (or near ready),
+    // Return to idle when released
+    controller.rightTrigger().whileTrue(superstructure.shoot()).onFalse(superstructure.idle());
+
+    // Left bumper: Climb up while held (top motor +0.2, bottom motor -0.2)
+    controller.leftBumper().whileTrue(climber.climbWhileHeld()).onFalse(climber.stop());
+
+    // Left trigger: Climb down while held (reverse direction: -0.2)
+    controller.leftTrigger().whileTrue(climber.climbWhileHeld(-ClimberConstants.CLIMB_DUTY)).onFalse(climber.stop());
 
     // B button: Emergency stop
     controller.b().onTrue(superstructure.emergencyStop());

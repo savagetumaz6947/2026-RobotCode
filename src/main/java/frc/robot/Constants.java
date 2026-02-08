@@ -7,13 +7,12 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -27,6 +26,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -66,27 +66,25 @@ public final class Constants {
     public static final Translation3d BLUE_AIM_TARGET = new Translation3d(4.625689, 4.040981, 0);
     public static final Translation3d RED_AIM_TARGET =
         new Translation3d(16.54175 - 4.625689, 4.040981, 0); // Mirrored across field
-  }
+  }   
 
-  public static class Vision {
-    // Limelight Configuration (supports one or multiple cameras)
-    public static class LimelightCamera {
-      public final String name;
-      public final Transform3d robotToCamera;
+  public static class PhotonVision {
+    public static class PhotonVisionCamera {
+      public final String cameraName;
+      public final Transform3d robotToCamera; 
 
-      public LimelightCamera(String name, Transform3d robotToCamera) {
-        this.name = name;
+      public PhotonVisionCamera(String cameraName, Transform3d robotToCamera) {
+        this.cameraName = cameraName;
         this.robotToCamera = robotToCamera;
       }
     }
 
-    // Add your Limelights here - example with front and back cameras
-    public static final LimelightCamera[] LIMELIGHT_CAMERAS = {
-      new LimelightCamera(
-          "limelight-front",
+    public static final PhotonVisionCamera[] PHOTON_VISION_CAMERA = {
+      new PhotonVisionCamera("FrontCamera",
           new Transform3d(
-              new Translation3d(0.324339, 0, 0.1337), new Rotation3d(0, Math.toRadians(10), 0))),
-    };
+            new Translation3d(0.324339, 0.0, 0.1337), 
+            new Rotation3d(0.0, Math.toRadians(10.0), 0.0))),
+    };  
 
     // The layout of the AprilTags on the field
     public static final AprilTagFieldLayout TAG_LAYOUT =
@@ -160,14 +158,28 @@ public final class Constants {
     public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Coast;
 
     // Current limits
-    public static final double STATOR_CURRENT_LIMIT = 80.0;
-    public static final double SUPPLY_CURRENT_LIMIT = 60.0;
-    public static final double SUPPLY_CURRENT_LOWER_TIME = 0.5;
+    public static final double STATOR_CURRENT_LIMIT = 160;
+    public static final double SUPPLY_CURRENT_LIMIT = 80.0;
+    public static final double SUPPLY_CURRENT_LOWER_TIME = 1;
 
     // Shooter duty cycle presets (-1.0 to 1.0)
     public static final double IDLE_DUTY_CYCLE = 0.0;
-    public static final double HUB_DUTY_CYCLE = 1.0;
+    public static final double HUB_DUTY_CYCLE = 0.8;
     public static final double PASS_DUTY_CYCLE = 0.3;
+
+    // Velocity control (rotations per second) and PID gains
+    // Increase hub velocity to a higher placeholder (tune on robot). Be careful: high values
+    // can draw a lot of current. This is intentionally high per request; reduce if needed.
+    public static final double HUB_VELOCITY_RPS = 53.0; // rotations per second (placeholder)
+    public static final double PASS_VELOCITY_RPS = 20.0; // placeholder
+    public static final double VELOCITY_TOLERANCE_RPS = 2.0; // acceptable error
+
+    // PID gains for velocity closed-loop on Shooter (applied to duty cycle output)
+    public static final double VELOCITY_KP = 0.025;
+    public static final double VELOCITY_KI = 0.0;
+    public static final double VELOCITY_KD = 0.0;
+    // Simple feedforward term (voltage fraction per RPS). Tune as needed.
+    public static final double VELOCITY_KV = 0.018;
   }
 
   public static class IntakeConstants {
@@ -182,8 +194,8 @@ public final class Constants {
     public static final int CURRENT_LIMIT = 40;
 
     // Intake percent output (0.0 to 1.0)
-    public static final double INTAKE_PERCENT = -0.3;
-    public static final double OUTTAKE_PERCENT = 0.3;
+    public static final double INTAKE_PERCENT = -0.2;
+    public static final double OUTTAKE_PERCENT = 0.2;
   }
 
   public static class IntakePivotConstants {
@@ -218,9 +230,9 @@ public final class Constants {
     public static final double KG = 0.0;
 
     // Motion Magic constants
-    public static final double CRUISE_VELOCITY = 100.0; // rotations per second
-    public static final double ACCELERATION = 200.0; // rotations per second^2
-    public static final double JERK = 2000.0; // rotations per second^3
+    public static final double CRUISE_VELOCITY = 70.0; // rotations per second
+    public static final double ACCELERATION = 100.0; // rotations per second^2
+    public static final double JERK = 1000.0; // rotations per second^3
 
     // Current limits
     public static final double STATOR_CURRENT_LIMIT = 60.0;
@@ -247,7 +259,26 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
     // Conveyor duty cycles (-1.0 to 1.0)
-    public static final double TO_SHOOTER_DUTY_CYCLE = 0.5; // 50% speed toward shooter
+    public static final double TO_SHOOTER_DUTY_CYCLE = 0.35; // 50% speed toward shooter
     public static final double TO_BUCKET_DUTY_CYCLE = -0.5; // 50% speed toward bucket
+  }
+
+  public static class ClimberConstants {
+    // Motor CAN IDs for climber (two motors mechanically linked)
+    public static final int TOP_MOTOR_CAN_ID = 55;
+    public static final int BOTTOM_MOTOR_CAN_ID = 56;
+    public static final String CAN_BUS = "rio";
+
+    // Inversion: top motor clockwise positive, bottom motor opposite direction
+    public static final boolean TOP_INVERTED = false;
+    public static final boolean BOTTOM_INVERTED = true;
+
+    // Neutral mode and current limits
+    public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
+    public static final double STATOR_CURRENT_LIMIT = 80.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 60.0;
+
+    // Default climb duty (hold-to-run uses this)
+    public static final double CLIMB_DUTY = 1.0;
   }
 }
