@@ -9,7 +9,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -165,7 +164,10 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(climber.climbWhileHeld()).onFalse(climber.stop());
 
     // Left trigger: Climb down while held (reverse direction: -0.2)
-    controller.leftTrigger().whileTrue(climber.climbWhileHeld(-ClimberConstants.CLIMB_DUTY)).onFalse(climber.stop());
+    controller
+        .leftTrigger()
+        .whileTrue(climber.climbWhileHeld(-ClimberConstants.CLIMB_DUTY))
+        .onFalse(climber.stop());
 
     // B button: Emergency stop
     controller.b().onTrue(superstructure.emergencyStop());

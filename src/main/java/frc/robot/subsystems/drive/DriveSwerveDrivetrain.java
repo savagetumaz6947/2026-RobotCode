@@ -13,7 +13,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -141,7 +140,7 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
           () ->
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
-                      == DriverStation.Alliance.Red, 
+                      == DriverStation.Alliance.Red,
           this);
 
       System.out.println("AutoBuilder configured successfully");

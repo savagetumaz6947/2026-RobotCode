@@ -7,12 +7,13 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -26,7 +27,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -66,12 +66,12 @@ public final class Constants {
     public static final Translation3d BLUE_AIM_TARGET = new Translation3d(4.625689, 4.040981, 0);
     public static final Translation3d RED_AIM_TARGET =
         new Translation3d(16.54175 - 4.625689, 4.040981, 0); // Mirrored across field
-  }   
+  }
 
   public static class PhotonVision {
     public static class PhotonVisionCamera {
       public final String cameraName;
-      public final Transform3d robotToCamera; 
+      public final Transform3d robotToCamera;
 
       public PhotonVisionCamera(String cameraName, Transform3d robotToCamera) {
         this.cameraName = cameraName;
@@ -80,11 +80,12 @@ public final class Constants {
     }
 
     public static final PhotonVisionCamera[] PHOTON_VISION_CAMERA = {
-      new PhotonVisionCamera("FrontCamera",
+      new PhotonVisionCamera(
+          "FrontCamera",
           new Transform3d(
-            new Translation3d(0.324339, 0.0, 0.1337), 
-            new Rotation3d(0.0, Math.toRadians(10.0), 0.0))),
-    };  
+              new Translation3d(0.324339, 0.0, 0.1337),
+              new Rotation3d(0.0, Math.toRadians(10.0), 0.0))),
+    };
 
     // The layout of the AprilTags on the field
     public static final AprilTagFieldLayout TAG_LAYOUT =
