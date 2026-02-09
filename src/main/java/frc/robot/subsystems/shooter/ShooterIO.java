@@ -18,6 +18,9 @@ public interface ShooterIO {
   /** Set the duty cycle (-1.0 to 1.0) */
   public default void setDutyCycle(double dutyCycle) {}
 
+  /** Set the velocity in rotations per second (closed-loop). */
+  public default void setVelocity(double velocityRotPerSec) {}
+
   /** Stop the shooter motor */
   public default void stop() {}
 

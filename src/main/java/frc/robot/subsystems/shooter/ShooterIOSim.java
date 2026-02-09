@@ -43,6 +43,18 @@ public class ShooterIOSim implements ShooterIO {
   }
 
   @Override
+  public void setVelocity(double velocityRotPerSec) {
+    double duty = 0.0;
+    if (MAX_VELOCITY > 0) {
+      duty = velocityRotPerSec / MAX_VELOCITY;
+    }
+
+    if (duty > 1.0) duty = 1.0;
+    if (duty < -1.0) duty = -1.0;
+    this.targetDutyCycle = duty;
+  }
+
+  @Override
   public void stop() {
     targetDutyCycle = 0.0;
   }

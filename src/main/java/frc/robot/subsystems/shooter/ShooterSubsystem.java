@@ -1,10 +1,11 @@
 package frc.robot.subsystems.shooter;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
-import org.littletonrobotics.junction.Logger;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -12,6 +13,10 @@ public class ShooterSubsystem extends SubsystemBase {
   private final ShooterIO.ShooterIOInputs inputs = new ShooterIO.ShooterIOInputs();
 
   private static ShooterSubsystem system;
+
+  private int readyStableCountHub = 0;
+  private int readyStableCountPass = 0;
+  private static final int READY_STABLE_CYCLES = 3;
 
   /** Constructs a {@link ShooterSubsystem} subsystem instance */
   private ShooterSubsystem(ShooterIO io) {
@@ -30,7 +35,12 @@ public class ShooterSubsystem extends SubsystemBase {
         })
         .withName("ShooterSpinUp");
   }
-
+  public Command spinUpVelocity(double velocityRotPerSec) {
+    return run(() -> {
+          setVelocity(velocityRotPerSec);
+        })
+        .withName("ShooterSpinUpVelocity");
+  }
   /**
    * Command to spin up the shooter to hub shooting speed
    *
@@ -83,11 +93,10 @@ public class ShooterSubsystem extends SubsystemBase {
     io.setDutyCycle(dutyCycle);
   }
 
-  /**
-   * Gets the shooter motor velocity
-   *
-   * @return The motor velocity in rotations per second
-   */
+  public void setVelocity(double velocityRotPerSec) {
+    io.setVelocity(velocityRotPerSec);
+  }
+
   public double getVelocity() {
     return inputs.velocityRotPerSec;
   }
@@ -98,16 +107,11 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return Always returns true since we're using duty cycle control
    */
   public boolean readyForHub() {
-    return true;
+    return readyStableCountHub >= READY_STABLE_CYCLES;
   }
 
-  /**
-   * Checks if the shooter is ready to pass (simplified - always true for duty cycle control)
-   *
-   * @return Always returns true since we're using duty cycle control
-   */
   public boolean readyForPass() {
-    return true;
+    return readyStableCountPass >= READY_STABLE_CYCLES;
   }
 
   /** Stops the shooter motors */
@@ -120,6 +124,24 @@ public class ShooterSubsystem extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.recordOutput("Shooter/VelocityRotPerSec", inputs.velocityRotPerSec);
     Logger.recordOutput("Shooter/CurrentAmps", inputs.currentAmps);
+
+    // Update readiness counters (debounce)
+    if (Math.abs(inputs.velocityRotPerSec - ShooterConstants.HUB_VELOCITY_RPS) 
+        <= ShooterConstants.VELOCITY_TOLERANCE_RPS) {
+      readyStableCountHub = Math.min(READY_STABLE_CYCLES, readyStableCountHub + 1);
+    } else {
+      readyStableCountHub = 0;
+    }
+
+    if (Math.abs(inputs.velocityRotPerSec - ShooterConstants.PASS_VELOCITY_RPS) 
+        <= ShooterConstants.VELOCITY_TOLERANCE_RPS) {
+      readyStableCountPass = Math.min(READY_STABLE_CYCLES, readyStableCountPass + 1);
+    } else {
+      readyStableCountPass = 0;
+    } 
+
+    Logger.recordOutput("Shooter/ReadyStableCountHub", readyStableCountHub);
+    Logger.recordOutput("Shooter/ReadyStableCountPass", readyStableCountPass);
   }
 
   /**
@@ -135,7 +157,6 @@ public class ShooterSubsystem extends SubsystemBase {
         system = new ShooterSubsystem(new ShooterIOTalonFX());
       }
     }
-
     return system;
   }
 

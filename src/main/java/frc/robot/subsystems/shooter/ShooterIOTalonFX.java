@@ -1,11 +1,16 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.StrictFollower;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterIOTalonFX implements ShooterIO {
@@ -14,10 +19,11 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   private final DutyCycleOut dutyCycleControl = new DutyCycleOut(0);
   private final VoltageOut voltageControl = new VoltageOut(0);
+  private final VelocityVoltage velocityVoltageControl = new VelocityVoltage(0);
 
   public ShooterIOTalonFX() {
-    leaderMotor = new TalonFX(ShooterConstants.LEADER_MOTOR_CAN_ID);
-    followerMotor = new TalonFX(ShooterConstants.FOLLOWER_MOTOR_CAN_ID);
+    leaderMotor = new TalonFX(ShooterConstants.LEADER_MOTOR_CAN_ID, ShooterConstants.CAN_BUS);
+    followerMotor = new TalonFX(ShooterConstants.FOLLOWER_MOTOR_CAN_ID, ShooterConstants.CAN_BUS);
 
     leaderMotor.getConfigurator().apply(shooterConfiguration());
     leaderMotor.setNeutralMode(ShooterConstants.NEUTRAL_MODE);
@@ -40,7 +46,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     followerMotor.getConfigurator().apply(followerConfig);
 
     // Set follower to follow leader
-    followerMotor.setControl(new StrictFollower(ShooterConstants.LEADER_MOTOR_CAN_ID));
+    followerMotor.setControl(new Follower(ShooterConstants.LEADER_MOTOR_CAN_ID, MotorAlignmentValue.Aligned));
   }
 
   @Override
@@ -55,17 +61,42 @@ public class ShooterIOTalonFX implements ShooterIO {
   @Override
   public void setDutyCycle(double dutyCycle) {
     leaderMotor.setControl(dutyCycleControl.withOutput(dutyCycle));
+    try {
+        followerMotor.setControl(dutyCycleControl.withOutput(dutyCycle));
+    } catch (Exception e) {
+      org.littletonrobotics.junction.Logger.recordOutput("Shooter/FollowerDutyCycleError", e.toString());
+    }
+  }
+
+  @Override
+  public void setVelocity(double velocityRotPerSec) {
+    var velocity = RotationsPerSecond.of(velocityRotPerSec);
+
+    leaderMotor.setControl(
+      velocityVoltageControl
+        .withVelocity(velocity)
+        .withFeedForward(ShooterConstants.VELOCITY_KV * velocityRotPerSec));
+    try {
+        followerMotor.setControl(velocityVoltageControl.withVelocity(velocity));
+    } catch (Exception e) {
+      org.littletonrobotics.junction.Logger.recordOutput("Shooter/FollowerVelocityError", e.toString());
+    }
   }
 
   @Override
   public void stop() {
-    leaderMotor.stopMotor();
-    followerMotor.stopMotor();
+    leaderMotor.setControl(dutyCycleControl.withOutput(0));
+    followerMotor.setControl(dutyCycleControl.withOutput(0));
   }
 
   @Override
   public void setVoltage(double volts) {
     leaderMotor.setControl(voltageControl.withOutput(volts));
+    try {
+        followerMotor.setControl(voltageControl.withOutput(volts));
+    } catch (Exception e) {
+      org.littletonrobotics.junction.Logger.recordOutput("Shooter/FollowerVoltageError", e.toString());
+    } 
   }
 
   /**
@@ -87,6 +118,11 @@ public class ShooterIOTalonFX implements ShooterIO {
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
 
+    configuration.Slot0 =
+      new Slot0Configs()
+          .withKP(ShooterConstants.VELOCITY_KP)
+          .withKI(ShooterConstants.VELOCITY_KI)
+          .withKD(ShooterConstants.VELOCITY_KD);
     return configuration;
   }
 }
