@@ -171,7 +171,7 @@ public final class Constants {
     // Velocity control (rotations per second) and PID gains
     // Increase hub velocity to a higher placeholder (tune on robot). Be careful: high values
     // can draw a lot of current. This is intentionally high per request; reduce if needed.
-    public static final double HUB_VELOCITY_RPS = 100.0; // rotations per second (placeholder)
+    public static final double HUB_VELOCITY_RPS = 90.0; // rotations per second (placeholder)
     public static final double PASS_VELOCITY_RPS = 20.0; // placeholder
     public static final double VELOCITY_TOLERANCE_RPS = 2.0; // acceptable error
 
