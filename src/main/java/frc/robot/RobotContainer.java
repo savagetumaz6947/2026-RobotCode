@@ -9,6 +9,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -142,8 +143,8 @@ public class RobotContainer {
                   edu.wpi.first.math.MathUtil.applyDeadband(
                       -controller.getRightX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
 
-              double vxMetersPerSec = leftY * 1.0; // Max 5 m/s
-              double vyMetersPerSec = leftX * 1.0;
+              double vxMetersPerSec = leftY * 1.5; // Max 5 m/s
+              double vyMetersPerSec = leftX * 1.5;
               double omegaRadPerSec = rightX * Math.PI; // Max PI rad/s
               swerveIO.driveFieldRelative(vxMetersPerSec, vyMetersPerSec, omegaRadPerSec);
             },
