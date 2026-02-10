@@ -180,7 +180,7 @@ public final class Constants {
     public static final double VELOCITY_KI = 0.0;
     public static final double VELOCITY_KD = 0.0;
     // Simple feedforward term (voltage fraction per RPS). Tune as needed.
-    public static final double VELOCITY_KV = 0.018;
+    public static final double VELOCITY_KV = 0.3;
   }
 
   public static class IntakeConstants {
