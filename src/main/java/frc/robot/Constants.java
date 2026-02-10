@@ -260,7 +260,7 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
     // Conveyor duty cycles (-1.0 to 1.0)
-    public static final double TO_SHOOTER_DUTY_CYCLE = 0.35; // 50% speed toward shooter
+    public static final double TO_SHOOTER_DUTY_CYCLE = 0.5; // 50% speed toward shooter
     public static final double TO_BUCKET_DUTY_CYCLE = -0.5; // 50% speed toward bucket
   }
 
