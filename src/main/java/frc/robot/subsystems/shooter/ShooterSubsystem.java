@@ -1,11 +1,10 @@
 package frc.robot.subsystems.shooter;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -35,6 +34,7 @@ public class ShooterSubsystem extends SubsystemBase {
         })
         .withName("ShooterSpinUp");
   }
+
   public Command spinUpVelocity(double velocityRotPerSec) {
     return run(() -> {
           setVelocity(velocityRotPerSec);
@@ -126,19 +126,19 @@ public class ShooterSubsystem extends SubsystemBase {
     Logger.recordOutput("Shooter/CurrentAmps", inputs.currentAmps);
 
     // Update readiness counters (debounce)
-    if (Math.abs(inputs.velocityRotPerSec - ShooterConstants.HUB_VELOCITY_RPS) 
+    if (Math.abs(inputs.velocityRotPerSec - ShooterConstants.HUB_VELOCITY_RPS)
         <= ShooterConstants.VELOCITY_TOLERANCE_RPS) {
       readyStableCountHub = Math.min(READY_STABLE_CYCLES, readyStableCountHub + 1);
     } else {
       readyStableCountHub = 0;
     }
 
-    if (Math.abs(inputs.velocityRotPerSec - ShooterConstants.PASS_VELOCITY_RPS) 
+    if (Math.abs(inputs.velocityRotPerSec - ShooterConstants.PASS_VELOCITY_RPS)
         <= ShooterConstants.VELOCITY_TOLERANCE_RPS) {
       readyStableCountPass = Math.min(READY_STABLE_CYCLES, readyStableCountPass + 1);
     } else {
       readyStableCountPass = 0;
-    } 
+    }
 
     Logger.recordOutput("Shooter/ReadyStableCountHub", readyStableCountHub);
     Logger.recordOutput("Shooter/ReadyStableCountPass", readyStableCountPass);

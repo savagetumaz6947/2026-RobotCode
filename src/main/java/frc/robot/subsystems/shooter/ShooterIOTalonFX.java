@@ -46,7 +46,8 @@ public class ShooterIOTalonFX implements ShooterIO {
     followerMotor.getConfigurator().apply(followerConfig);
 
     // Set follower to follow leader
-    followerMotor.setControl(new Follower(ShooterConstants.LEADER_MOTOR_CAN_ID, MotorAlignmentValue.Aligned));
+    followerMotor.setControl(
+        new Follower(ShooterConstants.LEADER_MOTOR_CAN_ID, MotorAlignmentValue.Aligned));
   }
 
   @Override
@@ -62,9 +63,10 @@ public class ShooterIOTalonFX implements ShooterIO {
   public void setDutyCycle(double dutyCycle) {
     leaderMotor.setControl(dutyCycleControl.withOutput(dutyCycle));
     try {
-        followerMotor.setControl(dutyCycleControl.withOutput(dutyCycle));
+      followerMotor.setControl(dutyCycleControl.withOutput(dutyCycle));
     } catch (Exception e) {
-      org.littletonrobotics.junction.Logger.recordOutput("Shooter/FollowerDutyCycleError", e.toString());
+      org.littletonrobotics.junction.Logger.recordOutput(
+          "Shooter/FollowerDutyCycleError", e.toString());
     }
   }
 
@@ -73,13 +75,14 @@ public class ShooterIOTalonFX implements ShooterIO {
     var velocity = RotationsPerSecond.of(velocityRotPerSec);
 
     leaderMotor.setControl(
-      velocityVoltageControl
-        .withVelocity(velocity)
-        .withFeedForward(ShooterConstants.VELOCITY_KV * velocityRotPerSec));
+        velocityVoltageControl
+            .withVelocity(velocity)
+            .withFeedForward(ShooterConstants.VELOCITY_KV * velocityRotPerSec));
     try {
-        followerMotor.setControl(velocityVoltageControl.withVelocity(velocity));
+      followerMotor.setControl(velocityVoltageControl.withVelocity(velocity));
     } catch (Exception e) {
-      org.littletonrobotics.junction.Logger.recordOutput("Shooter/FollowerVelocityError", e.toString());
+      org.littletonrobotics.junction.Logger.recordOutput(
+          "Shooter/FollowerVelocityError", e.toString());
     }
   }
 
@@ -93,10 +96,11 @@ public class ShooterIOTalonFX implements ShooterIO {
   public void setVoltage(double volts) {
     leaderMotor.setControl(voltageControl.withOutput(volts));
     try {
-        followerMotor.setControl(voltageControl.withOutput(volts));
+      followerMotor.setControl(voltageControl.withOutput(volts));
     } catch (Exception e) {
-      org.littletonrobotics.junction.Logger.recordOutput("Shooter/FollowerVoltageError", e.toString());
-    } 
+      org.littletonrobotics.junction.Logger.recordOutput(
+          "Shooter/FollowerVoltageError", e.toString());
+    }
   }
 
   /**
@@ -119,10 +123,10 @@ public class ShooterIOTalonFX implements ShooterIO {
             : InvertedValue.CounterClockwise_Positive;
 
     configuration.Slot0 =
-      new Slot0Configs()
-          .withKP(ShooterConstants.VELOCITY_KP)
-          .withKI(ShooterConstants.VELOCITY_KI)
-          .withKD(ShooterConstants.VELOCITY_KD);
+        new Slot0Configs()
+            .withKP(ShooterConstants.VELOCITY_KP)
+            .withKI(ShooterConstants.VELOCITY_KI)
+            .withKD(ShooterConstants.VELOCITY_KD);
     return configuration;
   }
 }
