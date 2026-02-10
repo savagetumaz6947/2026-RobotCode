@@ -176,11 +176,11 @@ public final class Constants {
     public static final double VELOCITY_TOLERANCE_RPS = 2.0; // acceptable error
 
     // PID gains for velocity closed-loop on Shooter (applied to duty cycle output)
-    public static final double VELOCITY_KP = 0.18;
+    public static final double VELOCITY_KP = 0.15;
     public static final double VELOCITY_KI = 0.0;
     public static final double VELOCITY_KD = 0.0;
     // Simple feedforward term (voltage fraction per RPS). Tune as needed.
-    public static final double VELOCITY_KV = 0.15;
+    public static final double VELOCITY_KV = 0.1;
   }
 
   public static class IntakeConstants {
