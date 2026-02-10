@@ -46,7 +46,8 @@ public class ShooterIOTalonFX implements ShooterIO {
     followerMotor.getConfigurator().apply(followerConfig);
 
     // Set follower to follow leader
-    followerMotor.setControl(new Follower(ShooterConstants.LEADER_MOTOR_CAN_ID, MotorAlignmentValue.Aligned));
+    followerMotor.setControl(
+        new Follower(ShooterConstants.LEADER_MOTOR_CAN_ID, MotorAlignmentValue.Aligned));
   }
 
   @Override
@@ -60,11 +61,14 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   @Override
   public void setDutyCycle(double dutyCycle) {
+    // If user explicitly sets duty cycle, cancel any velocity target to avoid PID
+    // fighting the open-loop command.
     leaderMotor.setControl(dutyCycleControl.withOutput(dutyCycle));
     try {
-        followerMotor.setControl(dutyCycleControl.withOutput(dutyCycle));
-    } catch (Exception e) {
-      org.littletonrobotics.junction.Logger.recordOutput("Shooter/FollowerDutyCycleError", e.toString());
+      followerMotor.setControl(dutyCycleControl.withOutput(dutyCycle));
+    } catch (Exception ex) {
+      org.littletonrobotics.junction.Logger.recordOutput(
+          "Shooter/FollowerControlError", ex.toString());
     }
   }
 
@@ -73,30 +77,35 @@ public class ShooterIOTalonFX implements ShooterIO {
     var velocity = RotationsPerSecond.of(velocityRotPerSec);
 
     leaderMotor.setControl(
-      velocityVoltageControl
-        .withVelocity(velocity)
-        .withFeedForward(ShooterConstants.VELOCITY_KV * velocityRotPerSec));
+        velocityVoltageControl
+            .withVelocity(velocity)
+            .withFeedForward(ShooterConstants.VELOCITY_KV * velocityRotPerSec));
     try {
-        followerMotor.setControl(velocityVoltageControl.withVelocity(velocity));
-    } catch (Exception e) {
-      org.littletonrobotics.junction.Logger.recordOutput("Shooter/FollowerVelocityError", e.toString());
+      followerMotor.setControl(velocityVoltageControl.withVelocity(velocity));
+    } catch (Exception ex) {
+      org.littletonrobotics.junction.Logger.recordOutput(
+          "Shooter/FollowerControlError", ex.toString());
     }
   }
 
   @Override
   public void stop() {
-    leaderMotor.setControl(dutyCycleControl.withOutput(0));
-    followerMotor.setControl(dutyCycleControl.withOutput(0));
+    // Clear any velocity target and stop motors. This prevents the PID loop from
+    // re-applying effort after a stop command. Also temporarily disable PID so
+    // the controller does not oscillate from abrupt setpoint changes.
+    leaderMotor.setControl(dutyCycleControl.withOutput(0.0));
+    followerMotor.setControl(dutyCycleControl.withOutput(0.0));
   }
 
   @Override
   public void setVoltage(double volts) {
     leaderMotor.setControl(voltageControl.withOutput(volts));
     try {
-        followerMotor.setControl(voltageControl.withOutput(volts));
-    } catch (Exception e) {
-      org.littletonrobotics.junction.Logger.recordOutput("Shooter/FollowerVoltageError", e.toString());
-    } 
+      followerMotor.setControl(voltageControl.withOutput(volts));
+    } catch (Exception ex) {
+      org.littletonrobotics.junction.Logger.recordOutput(
+          "Shooter/FollowerControlError", ex.toString());
+    }
   }
 
   /**
@@ -119,10 +128,10 @@ public class ShooterIOTalonFX implements ShooterIO {
             : InvertedValue.CounterClockwise_Positive;
 
     configuration.Slot0 =
-      new Slot0Configs()
-          .withKP(ShooterConstants.VELOCITY_KP)
-          .withKI(ShooterConstants.VELOCITY_KI)
-          .withKD(ShooterConstants.VELOCITY_KD);
+        new Slot0Configs()
+            .withKP(ShooterConstants.VELOCITY_KP)
+            .withKI(ShooterConstants.VELOCITY_KI)
+            .withKD(ShooterConstants.VELOCITY_KD);
     return configuration;
   }
 }
