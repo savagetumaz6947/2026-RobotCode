@@ -61,12 +61,14 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   @Override
   public void setDutyCycle(double dutyCycle) {
+    // If user explicitly sets duty cycle, cancel any velocity target to avoid PID
+    // fighting the open-loop command.
     leaderMotor.setControl(dutyCycleControl.withOutput(dutyCycle));
     try {
       followerMotor.setControl(dutyCycleControl.withOutput(dutyCycle));
-    } catch (Exception e) {
+    } catch (Exception ex) {
       org.littletonrobotics.junction.Logger.recordOutput(
-          "Shooter/FollowerDutyCycleError", e.toString());
+          "Shooter/FollowerControlError", ex.toString());
     }
   }
 
@@ -80,16 +82,19 @@ public class ShooterIOTalonFX implements ShooterIO {
             .withFeedForward(ShooterConstants.VELOCITY_KV * velocityRotPerSec));
     try {
       followerMotor.setControl(velocityVoltageControl.withVelocity(velocity));
-    } catch (Exception e) {
+    } catch (Exception ex) {
       org.littletonrobotics.junction.Logger.recordOutput(
-          "Shooter/FollowerVelocityError", e.toString());
+          "Shooter/FollowerControlError", ex.toString());
     }
   }
 
   @Override
   public void stop() {
-    leaderMotor.setControl(dutyCycleControl.withOutput(0));
-    followerMotor.setControl(dutyCycleControl.withOutput(0));
+    // Clear any velocity target and stop motors. This prevents the PID loop from
+    // re-applying effort after a stop command. Also temporarily disable PID so
+    // the controller does not oscillate from abrupt setpoint changes.
+    leaderMotor.setControl(dutyCycleControl.withOutput(0.0));
+    followerMotor.setControl(dutyCycleControl.withOutput(0.0));
   }
 
   @Override
@@ -97,9 +102,9 @@ public class ShooterIOTalonFX implements ShooterIO {
     leaderMotor.setControl(voltageControl.withOutput(volts));
     try {
       followerMotor.setControl(voltageControl.withOutput(volts));
-    } catch (Exception e) {
+    } catch (Exception ex) {
       org.littletonrobotics.junction.Logger.recordOutput(
-          "Shooter/FollowerVoltageError", e.toString());
+          "Shooter/FollowerControlError", ex.toString());
     }
   }
 
