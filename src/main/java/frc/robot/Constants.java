@@ -105,7 +105,7 @@ public final class Constants {
     public static final int DRIVE_MOTOR_COUNT = 1;
     public static final double WHEEL_COEFFICIENT_OF_FRICTION = 1.2;
 
-    public static final double JOYSTICK_DEADBAND = 0.05;
+    public static final double JOYSTICK_DEADBAND = 0.2;
     public static final LinearVelocity JOYSTICK_POV_VELOCITY = MetersPerSecond.of(0.2);
 
     public static final PPHolonomicDriveController PP_HOLONOMIC_DRIVE_CONTROLLER =
