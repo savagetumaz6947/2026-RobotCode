@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.conveyor.ConveyorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intakepivot.IntakePivotSubsystem;
@@ -76,7 +77,7 @@ public class Superstructure extends SubsystemBase {
   public Command prepareShoot() {
     return Commands.parallel(
             Commands.runOnce(() -> setState(SuperstructureState.PREPARE_SHOOT)),
-            intakePivot.stow(),
+            // intakePivot.stow(),
             intake.stop(),
             conveyor.stop(),
             shooter.spinUpForHub())
@@ -86,7 +87,11 @@ public class Superstructure extends SubsystemBase {
   public Command shoot() {
     return Commands.sequence(
             Commands.runOnce(() -> setState(SuperstructureState.SHOOT)),
-            Commands.waitUntil(shooter::readyForHub),
+            // Wait until shooter reports ready OR velocity is reasonably close to target
+            Commands.waitUntil(
+                () ->
+                    shooter.readyForHub()
+                        || shooter.getVelocity() >= ShooterConstants.HUB_VELOCITY_RPS * 0.8),
             conveyor.goToShooter())
         .withName("Superstructure_Shoot");
   }
