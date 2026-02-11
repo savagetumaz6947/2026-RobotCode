@@ -165,22 +165,22 @@ public final class Constants {
 
     // Shooter duty cycle presets (-1.0 to 1.0)
     public static final double IDLE_DUTY_CYCLE = 0.0;
-    public static final double HUB_DUTY_CYCLE = 0.8;
+    public static final double HUB_DUTY_CYCLE = 0.75;
     public static final double PASS_DUTY_CYCLE = 0.3;
 
     // Velocity control (rotations per second) and PID gains
     // Increase hub velocity to a higher placeholder (tune on robot). Be careful: high values
     // can draw a lot of current. This is intentionally high per request; reduce if needed.
-    public static final double HUB_VELOCITY_RPS = 100.0; // rotations per second (placeholder)
+    public static final double HUB_VELOCITY_RPS = 90.0; // rotations per second (placeholder)
     public static final double PASS_VELOCITY_RPS = 20.0; // placeholder
     public static final double VELOCITY_TOLERANCE_RPS = 2.0; // acceptable error
 
     // PID gains for velocity closed-loop on Shooter (applied to duty cycle output)
-    public static final double VELOCITY_KP = 0.18;
+    public static final double VELOCITY_KP = 0.15;
     public static final double VELOCITY_KI = 0.0;
     public static final double VELOCITY_KD = 0.0;
     // Simple feedforward term (voltage fraction per RPS). Tune as needed.
-    public static final double VELOCITY_KV = 0.3;
+    public static final double VELOCITY_KV = 0.1;
   }
 
   public static class IntakeConstants {
