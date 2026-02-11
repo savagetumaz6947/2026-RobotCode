@@ -127,11 +127,26 @@ public class TunerConstants {
   private static final Voltage kSteerFrictionVoltage = Volts.of(0.2);
   private static final Voltage kDriveFrictionVoltage = Volts.of(0.2);
 
-  public static final SwerveDrivetrainConstants DrivetrainConstants =
-      new SwerveDrivetrainConstants()
-          .withCANBusName(kCANBus.getName())
-          .withPigeon2Id(kPigeonId)
-          .withPigeon2Configs(pigeonConfigs);
+  // Control whether to create/configure a Pigeon2 on startup. Some robot harnesses do not
+  // have a Pigeon2 installed; attempting to construct/configure one can cause CAN devices
+  // to temporarily disappear. Only enable this when you have verified the Pigeon2's CAN ID
+  // and wiring (and optionally have filled pigeonConfigs).
+  private static final boolean kUsePigeon = false; // set true only when Pigeon2 is present
+
+  public static final SwerveDrivetrainConstants DrivetrainConstants;
+
+  static {
+    SwerveDrivetrainConstants builder =
+        new SwerveDrivetrainConstants().withCANBusName(kCANBus.getName());
+    if (kUsePigeon) {
+      // Only attach pigeon configs if explicitly enabled.
+      builder = builder.withPigeon2Id(kPigeonId);
+      if (pigeonConfigs != null) {
+        builder = builder.withPigeon2Configs(pigeonConfigs);
+      }
+    }
+    DrivetrainConstants = builder;
+  }
 
   private static final SwerveModuleConstantsFactory<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
@@ -196,7 +211,7 @@ public class TunerConstants {
   private static final int kBackRightDriveMotorId = 23;
   private static final int kBackRightSteerMotorId = 33;
   private static final int kBackRightEncoderId = 14;
-  private static final Angle kBackRightEncoderOffset = Rotations.of(-0.07080078125);
+  private static final Angle kBackRightEncoderOffset = Rotations.of(0.10083);
   private static final boolean kBackRightSteerMotorInverted = true;
   private static final boolean kBackRightEncoderInverted = false;
 

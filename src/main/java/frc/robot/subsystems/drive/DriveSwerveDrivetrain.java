@@ -8,6 +8,7 @@
 
 package frc.robot.subsystems.drive;
 
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -24,8 +25,16 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
   private final RobotState robotState;
 
   // SwerveRequest objects for different drive modes
-  private final SwerveRequest.FieldCentric fieldCentricDrive = new SwerveRequest.FieldCentric();
-  private final SwerveRequest.RobotCentric robotCentricDrive = new SwerveRequest.RobotCentric();
+  // Explicitly request open-loop voltage for both drive and steer so teleop stays in
+  // open-loop mode and doesn't accidentally engage closed-loop steer control which can
+  // cause twitching when switching commands.
+  private final SwerveRequest.FieldCentric fieldCentricDrive =
+      new SwerveRequest.FieldCentric()
+          .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
+
+  private final SwerveRequest.RobotCentric robotCentricDrive =
+      new SwerveRequest.RobotCentric()
+          .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
   public DriveSwerveDrivetrain(DriveIOHardware driveIO, RobotState robotState) {
     this.driveIO = driveIO;
