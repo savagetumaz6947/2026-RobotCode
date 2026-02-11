@@ -32,11 +32,9 @@ public class ShooterSubsystem extends SubsystemBase {
     return run(() -> setDutyCycle(dutyCycle)).withName("ShooterSpinUp");
   }
 
-  public Command spinUpVelocity(double velocityRotPerSec) {
-    return run(() -> {
-          setVelocity(velocityRotPerSec);
-        })
-        .withName("ShooterSpinUpVelocity");
+  /** Command to spin up the shooter to a specific velocity (rotations per second) */
+  public Command spinUpVelocity(double velocityRps) {
+    return run(() -> setVelocity(velocityRps)).withName("ShooterSpinUpVelocity");
   }
 
   /** Command to spin up the shooter to hub shooting speed */
