@@ -7,12 +7,13 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -26,7 +27,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -171,16 +171,16 @@ public final class Constants {
     // Velocity control (rotations per second) and PID gains
     // Increase hub velocity to a higher placeholder (tune on robot). Be careful: high values
     // can draw a lot of current. This is intentionally high per request; reduce if needed.
-    public static final double HUB_VELOCITY_RPS = 90.0; // rotations per second (placeholder)
+    public static final double HUB_VELOCITY_RPS = 100.0; // rotations per second (placeholder)
     public static final double PASS_VELOCITY_RPS = 20.0; // placeholder
     public static final double VELOCITY_TOLERANCE_RPS = 2.0; // acceptable error
 
     // PID gains for velocity closed-loop on Shooter (applied to duty cycle output)
-    public static final double VELOCITY_KP = 0.15;
+    public static final double VELOCITY_KP = 0.18;
     public static final double VELOCITY_KI = 0.0;
     public static final double VELOCITY_KD = 0.0;
     // Simple feedforward term (voltage fraction per RPS). Tune as needed.
-    public static final double VELOCITY_KV = 0.15;
+    public static final double VELOCITY_KV = 0.3;
   }
 
   public static class IntakeConstants {
