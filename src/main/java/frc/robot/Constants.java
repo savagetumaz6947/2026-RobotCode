@@ -165,7 +165,7 @@ public final class Constants {
 
     // Shooter duty cycle presets (-1.0 to 1.0)
     public static final double IDLE_DUTY_CYCLE = 0.0;
-    public static final double HUB_DUTY_CYCLE = 0.8;
+    public static final double HUB_DUTY_CYCLE = 0.7;
     public static final double PASS_DUTY_CYCLE = 0.3;
 
     // Velocity control (rotations per second) and PID gains

@@ -13,18 +13,6 @@
                 "data": {
                   "pathName": "BlueRSideStartShoot"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "PrepareShoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
-                }
               }
             ]
           }
@@ -36,12 +24,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 5.0
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
@@ -49,24 +31,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "BROutpostBackShoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "PrepareShoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Idle"
                 }
               }
             ]
