@@ -9,6 +9,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -192,8 +193,8 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "ResetPoseToStart", Commands.runOnce(() -> swerveIO.resetPose(new Pose2d())));
     NamedCommands.registerCommand("Intake", superstructure.intake());
-    NamedCommands.registerCommand("PrepareShoot", superstructure.prepareShoot());
-    NamedCommands.registerCommand("Shoot", superstructure.shoot());
+    NamedCommands.registerCommand("PrepareShoot", superstructure.prepareShootAuto());
+    NamedCommands.registerCommand("Shoot", superstructure.shootAuto());
     NamedCommands.registerCommand("Eject", superstructure.eject());
     NamedCommands.registerCommand("Idle", superstructure.idle());
   }

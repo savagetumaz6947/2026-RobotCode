@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -8,7 +10,6 @@ import frc.robot.subsystems.conveyor.ConveyorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intakepivot.IntakePivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
-import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends SubsystemBase {
 
@@ -94,6 +95,20 @@ public class Superstructure extends SubsystemBase {
                         || shooter.getVelocity() >= ShooterConstants.HUB_VELOCITY_RPS * 0.8),
             conveyor.goToShooter())
         .withName("Superstructure_Shoot");
+  }
+  public Command prepareShootAuto() {
+    return prepareShoot().withTimeout(0.25).withName("Superstructure_PrepareShootAuto");
+  }
+  public Command shootAuto() {
+    return Commands.sequence(
+            Commands.runOnce(() -> setState(SuperstructureState.SHOOT)),
+            Commands.waitUntil(shooter::readyForHub).withTimeout(1.25),
+            conveyor.goToShooter().withTimeout(0.75),
+            Commands.parallel(
+                conveyor.stop(),
+                shooter.stopShooter()
+            ))
+        .withName("Superstructure_ShootAuto");       
   }
 
   public Command eject() {

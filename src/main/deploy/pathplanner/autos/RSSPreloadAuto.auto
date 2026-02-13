@@ -13,6 +13,18 @@
                 "data": {
                   "pathName": "BlueRSideStartShoot"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrepareShoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
               }
             ]
           }
@@ -31,6 +43,18 @@
                 "type": "path",
                 "data": {
                   "pathName": "BROutpostBackShoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrepareShoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
                 }
               }
             ]
