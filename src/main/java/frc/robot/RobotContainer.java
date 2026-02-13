@@ -191,7 +191,7 @@ public class RobotContainer {
   private void registerNamedCommands() {
     NamedCommands.registerCommand(
         "ResetPoseToStart", Commands.runOnce(() -> swerveIO.resetPose(new Pose2d())));
-    NamedCommands.registerCommand("Intake", superstructure.intake());
+    NamedCommands.registerCommand("Intake", superstructure.intakeAuto());
     NamedCommands.registerCommand("PrepareShoot", superstructure.prepareShootAuto());
     NamedCommands.registerCommand("Shoot", superstructure.shootAuto());
     NamedCommands.registerCommand("Eject", superstructure.eject());
