@@ -112,7 +112,7 @@ public class Superstructure extends SubsystemBase {
   public Command shootAuto() {
     return Commands.sequence(
             Commands.runOnce(() -> setState(SuperstructureState.SHOOT)),
-            Commands.waitUntil(shooter::readyForHub).withTimeout(1),
+            Commands.waitUntil(shooter::readyForHub).withTimeout(1.5),
             Commands.parallel(
                 conveyor.goToShooter().withTimeout(3), intake.intake().withTimeout(2)),
             Commands.parallel(conveyor.stop(), intake.stop(), shooter.stopShooter()))
