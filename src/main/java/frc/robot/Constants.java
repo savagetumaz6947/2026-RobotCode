@@ -195,8 +195,8 @@ public final class Constants {
     public static final int CURRENT_LIMIT = 40;
 
     // Intake percent output (0.0 to 1.0)
-    public static final double INTAKE_PERCENT = -0.2;
-    public static final double OUTTAKE_PERCENT = 0.2;
+    public static final double INTAKE_PERCENT = -0.3;
+    public static final double OUTTAKE_PERCENT = 0.3;
   }
 
   public static class IntakePivotConstants {
@@ -231,9 +231,9 @@ public final class Constants {
     public static final double KG = 0.0;
 
     // Motion Magic constants
-    public static final double CRUISE_VELOCITY = 70.0; // rotations per second
-    public static final double ACCELERATION = 100.0; // rotations per second^2
-    public static final double JERK = 1000.0; // rotations per second^3
+    public static final double CRUISE_VELOCITY = 42.0; // rotations per second
+    public static final double ACCELERATION = 60.0; // rotations per second^2
+    public static final double JERK = 600.0; // rotations per second^3
 
     // Current limits
     public static final double STATOR_CURRENT_LIMIT = 60.0;

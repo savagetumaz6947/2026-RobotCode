@@ -142,8 +142,8 @@ public class RobotContainer {
                   edu.wpi.first.math.MathUtil.applyDeadband(
                       -controller.getRightX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
 
-              double vxMetersPerSec = leftY * 1.5; // Max 5 m/s
-              double vyMetersPerSec = leftX * 1.5;
+              double vxMetersPerSec = leftY * 2.0; // Max 5 m/s
+              double vyMetersPerSec = leftX * 2.0;
               double omegaRadPerSec = rightX * Math.PI; // Max PI rad/s
               swerveIO.driveFieldRelative(vxMetersPerSec, vyMetersPerSec, omegaRadPerSec);
             },

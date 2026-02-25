@@ -79,8 +79,7 @@ public class Superstructure extends SubsystemBase {
             Commands.runOnce(() -> setState(SuperstructureState.INTAKE)),
             intakePivot.deploy(),
             intake.intake().withTimeout(2),
-            intake.stop(),
-            intakePivot.stow())
+            intake.stop())
         .withName("Superstructure_IntakeAuto");
   }
 
@@ -113,9 +112,10 @@ public class Superstructure extends SubsystemBase {
   public Command shootAuto() {
     return Commands.sequence(
             Commands.runOnce(() -> setState(SuperstructureState.SHOOT)),
-            Commands.waitUntil(shooter::readyForHub).withTimeout(0.75),
-            conveyor.goToShooter().withTimeout(1),
-            Commands.parallel(conveyor.stop(), shooter.stopShooter()))
+            Commands.waitUntil(shooter::readyForHub).withTimeout(1),
+            Commands.parallel(
+                conveyor.goToShooter().withTimeout(3), intake.intake().withTimeout(2)),
+            Commands.parallel(conveyor.stop(), intake.stop(), shooter.stopShooter()))
         .withName("Superstructure_ShootAuto");
   }
 
