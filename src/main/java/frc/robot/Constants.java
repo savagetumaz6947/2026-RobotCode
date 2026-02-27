@@ -83,8 +83,7 @@ public final class Constants {
       new PhotonVisionCamera(
           "FrontCamera",
           new Transform3d(
-              new Translation3d(0.324339, 0.0, 0.1337),
-              new Rotation3d(0.0, Math.toRadians(10.0), 0.0))),
+              new Translation3d(0, -0.08, 0.55), new Rotation3d(0.0, Math.toRadians(10.0), 0.0))),
     };
 
     // The layout of the AprilTags on the field

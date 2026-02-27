@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConstants;
@@ -26,6 +27,7 @@ import frc.robot.subsystems.drive.DriveSwerveDrivetrain;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intakepivot.IntakePivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.vision.PhotonVision;
 import frc.robot.util.sim.MapleSimSwerveDrivetrain;
 
 /**
@@ -52,6 +54,8 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final SendableChooser<Command> autoChooser;
+  // Vision
+  private final PhotonVision photonVision;
 
   public RobotContainer() {
     if (Constants.currentMode == Constants.Mode.SIM) {
@@ -63,6 +67,17 @@ public class RobotContainer {
             TunerConstants.BackRight
           });
     }
+
+    // Create photon vision subsystem(s) and pass RobotState so the subsystem can apply vision
+    // pose updates in its periodic() method.
+    photonVision =
+        new PhotonVision(
+            Constants.PhotonVision.PHOTON_VISION_CAMERA[0].cameraName,
+            Constants.PhotonVision.PHOTON_VISION_CAMERA[0].robotToCamera,
+            robotState);
+
+    // Ensure PhotonVision.periodic() is called even if no commands require the subsystem.
+    CommandScheduler.getInstance().registerSubsystem(photonVision);
 
     switch (Constants.currentMode) {
       case REAL:
@@ -106,6 +121,13 @@ public class RobotContainer {
         break;
     }
 
+    // Wire PhotonVision to reset drivetrain odometry when a vision pose is applied. Do this
+    // after swerveIO is constructed so we can pass the setPose method reference.
+    try {
+      photonVision.setPoseApplier(swerveIO::setPose);
+    } catch (Exception ignored) {
+    }
+
     // Initialize subsystems
     intake = IntakeSubsystem.getInstance();
     intakePivot = IntakePivotSubsystem.getInstance();
@@ -125,6 +147,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Vision pose updates are handled in PhotonVision.periodic() now.
   }
 
   private void configureButtonBindings() {
