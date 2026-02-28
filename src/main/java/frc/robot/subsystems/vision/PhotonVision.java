@@ -41,7 +41,9 @@ public class PhotonVision extends SubsystemBase {
       Distance maxDistance,
       double maxAmbiguity) {
     camera = new PhotonCamera(cameraName);
-    photonEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
+    photonEstimator =
+        new PhotonPoseEstimator(
+            fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
     this.maxDistance = maxDistance;
     this.maxAmbiguity = maxAmbiguity;
   }

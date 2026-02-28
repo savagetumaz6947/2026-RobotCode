@@ -24,7 +24,6 @@ import frc.robot.subsystems.drive.DriveSwerveDrivetrain;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intakepivot.IntakePivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
-import frc.robot.subsystems.vision.PhotonVision;
 import frc.robot.util.sim.MapleSimSwerveDrivetrain;
 
 /**
@@ -43,7 +42,6 @@ public class RobotContainer {
   private final IntakePivotSubsystem intakePivot;
   private final ShooterSubsystem shooter;
   private final ConveyorSubsystem conveyor;
-  private final PhotonVision photonVision;
   private final Superstructure superstructure;
 
   // Controller
@@ -62,7 +60,6 @@ public class RobotContainer {
             TunerConstants.BackRight
           });
     }
-
 
     switch (Constants.currentMode) {
       case REAL:
