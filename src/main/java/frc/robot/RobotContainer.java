@@ -13,13 +13,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.ClimberConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.conveyor.ConveyorSubsystem;
 import frc.robot.subsystems.drive.DriveIOHardware;
 import frc.robot.subsystems.drive.DriveIOSim;
@@ -46,7 +43,7 @@ public class RobotContainer {
   private final IntakePivotSubsystem intakePivot;
   private final ShooterSubsystem shooter;
   private final ConveyorSubsystem conveyor;
-  private final ClimberSubsystem climber;
+  private final PhotonVision photonVision;
   private final Superstructure superstructure;
 
   // Controller
@@ -54,8 +51,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final SendableChooser<Command> autoChooser;
-  // Vision
-  private final PhotonVision photonVision;
 
   public RobotContainer() {
     if (Constants.currentMode == Constants.Mode.SIM) {
@@ -68,16 +63,6 @@ public class RobotContainer {
           });
     }
 
-    // Create photon vision subsystem(s) and pass RobotState so the subsystem can apply vision
-    // pose updates in its periodic() method.
-    photonVision =
-        new PhotonVision(
-            Constants.PhotonVision.PHOTON_VISION_CAMERA[0].cameraName,
-            Constants.PhotonVision.PHOTON_VISION_CAMERA[0].robotToCamera,
-            robotState);
-
-    // Ensure PhotonVision.periodic() is called even if no commands require the subsystem.
-    CommandScheduler.getInstance().registerSubsystem(photonVision);
 
     switch (Constants.currentMode) {
       case REAL:
@@ -121,19 +106,11 @@ public class RobotContainer {
         break;
     }
 
-    // Wire PhotonVision to reset drivetrain odometry when a vision pose is applied. Do this
-    // after swerveIO is constructed so we can pass the setPose method reference.
-    try {
-      photonVision.setPoseApplier(swerveIO::setPose);
-    } catch (Exception ignored) {
-    }
-
     // Initialize subsystems
     intake = IntakeSubsystem.getInstance();
     intakePivot = IntakePivotSubsystem.getInstance();
     conveyor = ConveyorSubsystem.getInstance();
     shooter = ShooterSubsystem.getInstance();
-    climber = ClimberSubsystem.getInstance();
 
     // Initialize superstructure
     superstructure = new Superstructure(shooter, intake, intakePivot, conveyor);
@@ -174,24 +151,19 @@ public class RobotContainer {
             swerveIO));
 
     // === SUPERSTRUCTURE CONTROLS ===
-    // A button: Switch to intake mode
-    controller.a().onTrue(superstructure.intake());
 
     // X button: Prepare to shoot (spin up shooter, stow intake)
-    controller.x().onTrue(superstructure.prepareShoot());
+    // controller.x().onTrue(superstructure.prepareShoot());
 
     // Right trigger: Shoot while held, start conveyer when shooter ready (or near ready),
     // Return to idle when released
     controller.rightTrigger().whileTrue(superstructure.shoot()).onFalse(superstructure.idle());
 
     // Left bumper: Climb up while held (top motor +0.2, bottom motor -0.2)
-    controller.leftBumper().whileTrue(climber.climbWhileHeld()).onFalse(climber.stop());
+    controller.leftBumper().onTrue(superstructure.eject());
 
     // Left trigger: Climb down while held (reverse direction: -0.2)
-    controller
-        .leftTrigger()
-        .whileTrue(climber.climbWhileHeld(-ClimberConstants.CLIMB_DUTY))
-        .onFalse(climber.stop());
+    controller.rightBumper().onTrue(superstructure.intake());
 
     // B button: Emergency stop
     controller.b().onTrue(superstructure.emergencyStop());

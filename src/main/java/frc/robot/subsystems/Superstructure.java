@@ -120,11 +120,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command eject() {
-    return Commands.parallel(intakePivot.deploy(), intake.outtake(), conveyor.goToBucket())
-        .finallyDo(
-            () -> {
-              setState(SuperstructureState.IDLE);
-            })
+    return Commands.parallel(
+            intakePivot.deploy(), intake.outtake(), conveyor.goToBucket(), shooter.stopShooter())
         .withName("Superstructure_Eject");
   }
 

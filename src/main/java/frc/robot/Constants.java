@@ -230,8 +230,8 @@ public final class Constants {
     public static final double KG = 0.0;
 
     // Motion Magic constants
-    public static final double CRUISE_VELOCITY = 42.0; // rotations per second
-    public static final double ACCELERATION = 60.0; // rotations per second^2
+    public static final double CRUISE_VELOCITY = 30.0; // rotations per second
+    public static final double ACCELERATION = 30.0; // rotations per second^2
     public static final double JERK = 600.0; // rotations per second^3
 
     // Current limits
@@ -239,7 +239,7 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
     // Position setpoints (in rotations)
-    public static final double STOWED_POSITION = 0.0; // Stowed/up position
+    public static final double STOWED_POSITION = 2.7; // Stowed/up position
     public static final double DEPLOYED_POSITION = 5.4; // Extended/down position for intaking
 
     // Position tolerance
