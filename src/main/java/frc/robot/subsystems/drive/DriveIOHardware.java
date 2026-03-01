@@ -13,8 +13,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+
 import edu.wpi.first.math.geometry.Pose2d;
+
 import frc.robot.RobotState;
+
 import java.util.function.Consumer;
 
 /**
@@ -24,7 +27,9 @@ import java.util.function.Consumer;
 public class DriveIOHardware extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> {
 
   protected RobotState robotState;
-  protected Consumer<SwerveDriveState> telemetryConsumer_ =
+
+  /** Base telemetry consumer used by both REAL and SIM (DriveIOSim calls telemetryConsumer_.accept) */
+  protected final Consumer<SwerveDriveState> telemetryConsumer_ =
       swerveDriveState -> {
         // Update RobotState with pose from telemetry
         if (robotState != null) {
@@ -36,15 +41,24 @@ public class DriveIOHardware extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       RobotState robotState,
       SwerveDrivetrainConstants driveTrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
+
     super(TalonFX::new, TalonFX::new, CANcoder::new, driveTrainConstants, 250.0, modules);
 
     this.robotState = robotState;
+
+    // Prioritize odometry thread like you already do
     this.getOdometryThread().setThreadPriority(99);
 
+    // Register the default telemetry consumer
     registerTelemetry(telemetryConsumer_);
   }
 
   public void resetOdometry(Pose2d pose) {
     super.resetPose(pose);
+  }
+
+  /** Allow drivetrain wrapper to inject vision into Phoenix estimator */
+  public void addVisionMeasurement(Pose2d pose, double timestampSeconds) {
+    super.addVisionMeasurement(pose, timestampSeconds);
   }
 }

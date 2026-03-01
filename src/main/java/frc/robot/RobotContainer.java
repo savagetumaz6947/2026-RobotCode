@@ -9,12 +9,15 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
+import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.conveyor.ConveyorSubsystem;
@@ -24,6 +27,7 @@ import frc.robot.subsystems.drive.DriveSwerveDrivetrain;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intakepivot.IntakePivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.vision.PhotonVision;
 import frc.robot.util.sim.MapleSimSwerveDrivetrain;
 
 /**
@@ -42,6 +46,7 @@ public class RobotContainer {
   private final IntakePivotSubsystem intakePivot;
   private final ShooterSubsystem shooter;
   private final ConveyorSubsystem conveyor;
+  private final PhotonVision vision;
   private final Superstructure superstructure;
 
   // Controller
@@ -112,6 +117,9 @@ public class RobotContainer {
     // Initialize superstructure
     superstructure = new Superstructure(shooter, intake, intakePivot, conveyor);
 
+    vision = new PhotonVision(Constants.PhotonVision.PHOTON_VISION_CAMERA[0].cameraName, Constants.PhotonVision.PHOTON_VISION_CAMERA[0].robotToCamera);
+
+    vision.setDefaultCommand(Commands.run(() -> vision.updateVision(swerveIO), vision));
     // Register named commands for autonomous routines
     registerNamedCommands();
 

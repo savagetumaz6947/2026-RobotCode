@@ -13,22 +13,21 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.RobotState;
 
 public class DriveSwerveDrivetrain extends SubsystemBase {
+
   private final DriveIOHardware driveIO;
   private final RobotState robotState;
 
   // SwerveRequest objects for different drive modes
-  // Explicitly request open-loop voltage for both drive and steer so teleop stays in
-  // open-loop mode and doesn't accidentally engage closed-loop steer control which can
-  // cause twitching when switching commands.
   private final SwerveRequest.FieldCentric fieldCentricDrive = new SwerveRequest.FieldCentric();
-
   private final SwerveRequest.RobotCentric robotCentricDrive = new SwerveRequest.RobotCentric();
 
   public DriveSwerveDrivetrain(DriveIOHardware driveIO, RobotState robotState) {
@@ -45,6 +44,7 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
     var fieldRelativeSpeed =
         ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeSpeed, getPose().getRotation());
     robotState.updateChassisSpeeds(fieldRelativeSpeed, robotRelativeSpeed);
+
     // Log robot state
     robotState.log();
 
@@ -76,6 +76,11 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
     setPose(pose);
   }
 
+  /** Inject a vision measurement into Phoenix's internal estimator */
+  public void addVisionMeasurement(Pose2d pose, double timestampSeconds) {
+    driveIO.addVisionMeasurement(pose, timestampSeconds);
+  }
+
   /**
    * Drive the robot in field-relative mode.
    *
@@ -100,6 +105,11 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
         robotCentricDrive.withVelocityX(vx).withVelocityY(vy).withRotationalRate(omega));
   }
 
+  /** Stop the drivetrain. */
+  public void stop() {
+    driveRobotRelative(0.0, 0.0, 0.0);
+  }
+
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return driveIO.getState().Speeds;
   }
@@ -117,9 +127,19 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
     driveIO.setControl(request);
   }
 
-  /** Stop the drivetrain. */
-  public void stop() {
-    driveRobotRelative(0, 0, 0);
+  /** Overload for FieldCentric request (older command files may call this directly). */
+  public void applyRequest(SwerveRequest.FieldCentric request) {
+    driveIO.setControl(request);
+  }
+
+  /**
+   * Overload for ApplyRobotSpeeds request (older command files may call this directly).
+   * If your CTRE version doesn't have ApplyRobotSpeeds, VSCode will underline this.
+   * In that case, replace ApplyRobotSpeeds with the correct request type your CTRE
+   * version exposes (autocomplete will show the real name).
+   */
+  public void applyRequest(SwerveRequest.ApplyRobotSpeeds request) {
+    driveIO.setControl(request);
   }
 
   /** Get the underlying DriveIO instance. */
