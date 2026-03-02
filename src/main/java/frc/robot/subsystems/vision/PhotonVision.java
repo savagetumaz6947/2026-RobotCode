@@ -51,7 +51,8 @@ public class PhotonVision extends SubsystemBase {
     // IMPORTANT: This constructor signature matches your installed PhotonVision API
     // (no PhotonCamera parameter in constructor).
     this.photonEstimator =
-        new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
+        new PhotonPoseEstimator(
+            fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
 
     this.maxDistance = maxDistance;
     this.maxAmbiguity = maxAmbiguity;
@@ -78,8 +79,7 @@ public class PhotonVision extends SubsystemBase {
       double ambiguity = target.getPoseAmbiguity();
       double distance = target.getBestCameraToTarget().getTranslation().getNorm();
 
-      if (overrideCheck
-          || (ambiguity < maxAmbiguity && distance < maxDistance.in(Meters))) {
+      if (overrideCheck || (ambiguity < maxAmbiguity && distance < maxDistance.in(Meters))) {
         // Keep the latest acceptable measurement from unread results
         best = estimate;
       }
@@ -91,7 +91,7 @@ public class PhotonVision extends SubsystemBase {
   /**
    * Call periodically to push vision into the Phoenix swerve estimator.
    *
-   * This does NOT overwrite pose; it fuses as a measurement via
+   * <p>This does NOT overwrite pose; it fuses as a measurement via
    * DriveSwerveDrivetrain.addVisionMeasurement().
    */
   public void updateVision(DriveSwerveDrivetrain drivetrain) {

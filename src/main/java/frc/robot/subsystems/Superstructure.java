@@ -87,7 +87,6 @@ public class Superstructure extends SubsystemBase {
     return Commands.parallel(
             Commands.runOnce(() -> setState(SuperstructureState.PREPARE_SHOOT)),
             // intakePivot.stow(),
-            intake.stop(),
             conveyor.stop(),
             shooter.spinUpForHub())
         .withName("Superstructure_PrepareShoot");
@@ -100,7 +99,7 @@ public class Superstructure extends SubsystemBase {
             Commands.waitUntil(
                 () ->
                     shooter.readyForHub()
-                        || shooter.getVelocity() >= ShooterConstants.HUB_VELOCITY_RPS * 0.8),
+                        || shooter.getVelocity() >= ShooterConstants.HUB_VELOCITY_RPS * 0.85),
             conveyor.goToShooter())
         .withName("Superstructure_Shoot");
   }

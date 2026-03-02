@@ -13,11 +13,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-
 import edu.wpi.first.math.geometry.Pose2d;
-
 import frc.robot.RobotState;
-
 import java.util.function.Consumer;
 
 /**
@@ -28,7 +25,9 @@ public class DriveIOHardware extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   protected RobotState robotState;
 
-  /** Base telemetry consumer used by both REAL and SIM (DriveIOSim calls telemetryConsumer_.accept) */
+  /**
+   * Base telemetry consumer used by both REAL and SIM (DriveIOSim calls telemetryConsumer_.accept)
+   */
   protected final Consumer<SwerveDriveState> telemetryConsumer_ =
       swerveDriveState -> {
         // Update RobotState with pose from telemetry

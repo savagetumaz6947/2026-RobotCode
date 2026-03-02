@@ -13,12 +13,10 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import frc.robot.RobotState;
 
 public class DriveSwerveDrivetrain extends SubsystemBase {
@@ -133,10 +131,10 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
   }
 
   /**
-   * Overload for ApplyRobotSpeeds request (older command files may call this directly).
-   * If your CTRE version doesn't have ApplyRobotSpeeds, VSCode will underline this.
-   * In that case, replace ApplyRobotSpeeds with the correct request type your CTRE
-   * version exposes (autocomplete will show the real name).
+   * Overload for ApplyRobotSpeeds request (older command files may call this directly). If your
+   * CTRE version doesn't have ApplyRobotSpeeds, VSCode will underline this. In that case, replace
+   * ApplyRobotSpeeds with the correct request type your CTRE version exposes (autocomplete will
+   * show the real name).
    */
   public void applyRequest(SwerveRequest.ApplyRobotSpeeds request) {
     driveIO.setControl(request);

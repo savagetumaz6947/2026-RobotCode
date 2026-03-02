@@ -194,8 +194,8 @@ public final class Constants {
     public static final int CURRENT_LIMIT = 40;
 
     // Intake percent output (0.0 to 1.0)
-    public static final double INTAKE_PERCENT = -0.3;
-    public static final double OUTTAKE_PERCENT = 0.3;
+    public static final double INTAKE_PERCENT = -0.5;
+    public static final double OUTTAKE_PERCENT = 0.55;
   }
 
   public static class IntakePivotConstants {
@@ -213,7 +213,7 @@ public final class Constants {
 
     // Motor encoder offsets (in rotations)
     // Set these to the current position when the mechanism is at its zero/reference position
-    public static final double RIGHT_MOTOR_ROTOR_OFFSET = -0.087;
+    public static final double RIGHT_MOTOR_ROTOR_OFFSET = -0.09;
     public static final double LEFT_MOTOR_ROTOR_OFFSET = -0.262; // Adjust as needed
 
     // Soft limits (in rotations)
@@ -232,7 +232,7 @@ public final class Constants {
     // Motion Magic constants
     public static final double CRUISE_VELOCITY = 30.0; // rotations per second
     public static final double ACCELERATION = 30.0; // rotations per second^2
-    public static final double JERK = 600.0; // rotations per second^3
+    public static final double JERK = 400.0; // rotations per second^3
 
     // Current limits
     public static final double STATOR_CURRENT_LIMIT = 60.0;
@@ -259,8 +259,8 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
     // Conveyor duty cycles (-1.0 to 1.0)
-    public static final double TO_SHOOTER_DUTY_CYCLE = 0.5; // 50% speed toward shooter
-    public static final double TO_BUCKET_DUTY_CYCLE = -0.5; // 50% speed toward bucket
+    public static final double TO_SHOOTER_DUTY_CYCLE = 1.00; // 50% speed toward shooter
+    public static final double TO_BUCKET_DUTY_CYCLE = -0.75; // 50% speed toward bucket
   }
 
   public static class ClimberConstants {
