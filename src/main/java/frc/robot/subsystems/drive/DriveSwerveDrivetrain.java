@@ -18,11 +18,17 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
+import frc.robot.subsystems.vision.PhotonVision;
 
 public class DriveSwerveDrivetrain extends SubsystemBase {
 
   private final DriveIOHardware driveIO;
   private final RobotState robotState;
+  private PhotonVision vision = null;
+
+  public void setPhotonVision(PhotonVision vision) {
+    this.vision = vision;
+  }
 
   // SwerveRequest objects for different drive modes
   private final SwerveRequest.FieldCentric fieldCentricDrive = new SwerveRequest.FieldCentric();
@@ -49,6 +55,11 @@ public class DriveSwerveDrivetrain extends SubsystemBase {
     // Log simulated pose if using DriveIOSim
     if (driveIO instanceof DriveIOSim) {
       ((DriveIOSim) driveIO).logSimulatedPose();
+    }
+
+    // Update vision without being a command
+    if (vision != null) {
+      vision.updateVision(this);
     }
   }
 

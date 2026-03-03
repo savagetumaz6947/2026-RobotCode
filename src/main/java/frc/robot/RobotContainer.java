@@ -119,7 +119,7 @@ public class RobotContainer {
             Constants.PhotonVision.PHOTON_VISION_CAMERA[0].cameraName,
             Constants.PhotonVision.PHOTON_VISION_CAMERA[0].robotToCamera);
 
-    vision.setDefaultCommand(Commands.run(() -> vision.updateVision(swerveIO), vision));
+    swerveIO.setPhotonVision(vision);
     // Register named commands for autonomous routines
     registerNamedCommands();
 
