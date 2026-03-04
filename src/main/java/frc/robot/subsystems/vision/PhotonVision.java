@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.DriveSwerveDrivetrain;
 import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -68,24 +69,28 @@ public class PhotonVision extends SubsystemBase {
    * @param overrideCheck if true, skips ambiguity+distance filtering
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(boolean overrideCheck) {
-    Optional<EstimatedRobotPose> best = Optional.empty();
+    Optional<EstimatedRobotPose> visionEst = Optional.empty();
+
+    Logger.recordOutput("Vision/UnreadResults", camera.getAllUnreadResults().size());
+    Logger.recordOutput("Vision/HasTargets", false); // default to false, set to true if any results have targets
 
     for (var res : camera.getAllUnreadResults()) {
-      Optional<EstimatedRobotPose> estimate = photonEstimator.estimateCoprocMultiTagPose(res);
+      Logger.recordOutput("Vision/HasTargets", res.hasTargets());
+      Optional<EstimatedRobotPose> photonPose = photonEstimator.estimateCoprocMultiTagPose(res);
 
-      if (estimate.isEmpty()) continue;
+      if (photonPose.isPresent()) {
+        var target = res.getBestTarget();
+        double ambiguity = target.getPoseAmbiguity();
+        double distance = target.getBestCameraToTarget().getTranslation().getNorm();
 
-      var target = res.getBestTarget();
-      double ambiguity = target.getPoseAmbiguity();
-      double distance = target.getBestCameraToTarget().getTranslation().getNorm();
-
-      if (overrideCheck || (ambiguity < maxAmbiguity && distance < maxDistance.in(Meters))) {
-        // Keep the latest acceptable measurement from unread results
-        best = estimate;
+        if (overrideCheck || (ambiguity < maxAmbiguity && distance < maxDistance.in(Meters))) {
+          // Keep the latest acceptable measurement from unread results
+          visionEst = photonPose;
+        }
       }
     }
 
-    return best;
+    return visionEst;
   }
 
   /**
@@ -95,24 +100,17 @@ public class PhotonVision extends SubsystemBase {
    * DriveSwerveDrivetrain.addVisionMeasurement().
    */
   public void updateVision(DriveSwerveDrivetrain drivetrain) {
-    // Iterate unread results so we don't build up latency
-    for (var res : camera.getAllUnreadResults()) {
-      Optional<EstimatedRobotPose> estimate = photonEstimator.estimateCoprocMultiTagPose(res);
-      if (estimate.isEmpty()) continue;
+    Optional<EstimatedRobotPose> visionEst = getEstimatedGlobalPose(false);
+    Logger.recordOutput("Vision/EstimatePresent", visionEst.isPresent());
+    boolean addedMeasurement = false;
 
-      var e = estimate.get();
+    if (visionEst.isPresent()) {
+      EstimatedRobotPose estimatedPose = visionEst.get();
+      Logger.recordOutput("Vision/EstimatedPose", estimatedPose.estimatedPose);
 
-      // Extra safety
-      if (e.targetsUsed == null || e.targetsUsed.isEmpty()) continue;
-
-      var bestTarget = res.getBestTarget();
-      double ambiguity = bestTarget.getPoseAmbiguity();
-      double distance = bestTarget.getBestCameraToTarget().getTranslation().getNorm();
-
-      if (ambiguity > maxAmbiguity) continue;
-      if (distance > maxDistance.in(Meters)) continue;
-
-      drivetrain.addVisionMeasurement(e.estimatedPose.toPose2d(), e.timestampSeconds);
+      drivetrain.addVisionMeasurement(estimatedPose.estimatedPose.toPose2d(), estimatedPose.timestampSeconds);
+      addedMeasurement = true;
     }
+    Logger.recordOutput("Vision/AddedMeasurement", addedMeasurement);
   }
 }
