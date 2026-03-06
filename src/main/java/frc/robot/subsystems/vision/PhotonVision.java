@@ -72,7 +72,8 @@ public class PhotonVision extends SubsystemBase {
     Optional<EstimatedRobotPose> visionEst = Optional.empty();
 
     Logger.recordOutput("Vision/UnreadResults", camera.getAllUnreadResults().size());
-    Logger.recordOutput("Vision/HasTargets", false); // default to false, set to true if any results have targets
+    Logger.recordOutput(
+        "Vision/HasTargets", false); // default to false, set to true if any results have targets
 
     for (var res : camera.getAllUnreadResults()) {
       Logger.recordOutput("Vision/HasTargets", res.hasTargets());
@@ -100,6 +101,9 @@ public class PhotonVision extends SubsystemBase {
    * DriveSwerveDrivetrain.addVisionMeasurement().
    */
   public void updateVision(DriveSwerveDrivetrain drivetrain) {
+    Logger.recordOutput("Vision/PeriodicRunning", true);
+    Logger.recordOutput("Vision/CameraConnected", camera.isConnected());
+
     Optional<EstimatedRobotPose> visionEst = getEstimatedGlobalPose(false);
     Logger.recordOutput("Vision/EstimatePresent", visionEst.isPresent());
     boolean addedMeasurement = false;
@@ -108,7 +112,8 @@ public class PhotonVision extends SubsystemBase {
       EstimatedRobotPose estimatedPose = visionEst.get();
       Logger.recordOutput("Vision/EstimatedPose", estimatedPose.estimatedPose);
 
-      drivetrain.addVisionMeasurement(estimatedPose.estimatedPose.toPose2d(), estimatedPose.timestampSeconds);
+      drivetrain.addVisionMeasurement(
+          estimatedPose.estimatedPose.toPose2d(), estimatedPose.timestampSeconds);
       addedMeasurement = true;
     }
     Logger.recordOutput("Vision/AddedMeasurement", addedMeasurement);
