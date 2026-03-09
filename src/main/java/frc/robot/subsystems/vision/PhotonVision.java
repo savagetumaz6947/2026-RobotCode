@@ -49,8 +49,6 @@ public class PhotonVision extends SubsystemBase {
 
     this.camera = new PhotonCamera(cameraName);
 
-    // IMPORTANT: This constructor signature matches your installed PhotonVision API
-    // (no PhotonCamera parameter in constructor).
     this.photonEstimator =
         new PhotonPoseEstimator(
             fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
@@ -76,7 +74,11 @@ public class PhotonVision extends SubsystemBase {
         "Vision/HasTargets", false); // default to false, set to true if any results have targets
 
     for (var res : camera.getAllUnreadResults()) {
+      Logger.recordOutput("Vision/CameraName", camera.getName());
+      Logger.recordOutput("Vision/PipelineIndex", camera.getPipelineIndex());
       Logger.recordOutput("Vision/HasTargets", res.hasTargets());
+      Logger.recordOutput("Vision/TargetCount", res.getTargets().size());
+
       Optional<EstimatedRobotPose> photonPose = photonEstimator.estimateCoprocMultiTagPose(res);
 
       if (photonPose.isPresent()) {

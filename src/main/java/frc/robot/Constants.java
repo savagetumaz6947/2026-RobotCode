@@ -262,23 +262,4 @@ public final class Constants {
     public static final double TO_SHOOTER_DUTY_CYCLE = 1.00; // 50% speed toward shooter
     public static final double TO_BUCKET_DUTY_CYCLE = -0.75; // 50% speed toward bucket
   }
-
-  public static class ClimberConstants {
-    // Motor CAN IDs for climber (two motors mechanically linked)
-    public static final int TOP_MOTOR_CAN_ID = 55;
-    public static final int BOTTOM_MOTOR_CAN_ID = 56;
-    public static final String CAN_BUS = "rio";
-
-    // Inversion: top motor clockwise positive, bottom motor opposite direction
-    public static final boolean TOP_INVERTED = false;
-    public static final boolean BOTTOM_INVERTED = true;
-
-    // Neutral mode and current limits
-    public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
-    public static final double STATOR_CURRENT_LIMIT = 80.0;
-    public static final double SUPPLY_CURRENT_LIMIT = 60.0;
-
-    // Default climb duty (hold-to-run uses this)
-    public static final double CLIMB_DUTY = 1.0;
-  }
 }
