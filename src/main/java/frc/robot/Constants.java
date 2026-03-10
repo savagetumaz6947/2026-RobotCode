@@ -97,7 +97,7 @@ public final class Constants {
 
   public static class DriveConstants {
     // Maple-Sim Physics Simulation Configuration
-    public static final boolean USE_MAPLE_SIM = true;
+    public static final boolean USE_MAPLE_SIM = false;
     public static final double ROBOT_WEIGHT_KILOGRAMS = 30.0;
     public static final double BUMPER_LENGTH_INCHES = 32.0;
     public static final double BUMPER_WIDTH_INCHES = 32.0;
