@@ -98,14 +98,7 @@ public class PhotonVision extends SubsystemBase {
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(boolean overrideCheck) {
     Optional<EstimatedRobotPose> visionEst = Optional.empty();
 
-    Logger.recordOutput(
-        "Vision/HasTargets", false); // default to false, set to true if any results have targets
-
     for (var res : camera.getAllUnreadResults()) {
-      Logger.recordOutput("Vision/CameraName", camera.getName());
-      Logger.recordOutput("Vision/PipelineIndex", camera.getPipelineIndex());
-      Logger.recordOutput("Vision/HasTargets", res.hasTargets());
-      Logger.recordOutput("Vision/TargetCount", res.getTargets().size());
 
       visionEst = photonEstimator.estimateCoprocMultiTagPose(res);
       if (visionEst.isEmpty()) {
@@ -147,8 +140,6 @@ public class PhotonVision extends SubsystemBase {
     Logger.recordOutput("Vision/CameraConnected", camera.isConnected());
 
     Optional<EstimatedRobotPose> visionEst = getEstimatedGlobalPose(false);
-    Logger.recordOutput("Vision/EstimatePresent", visionEst.isPresent());
-    boolean addedMeasurement = false;
 
     if (visionEst.isPresent()) {
       EstimatedRobotPose estimatedPose = visionEst.get();
@@ -157,9 +148,6 @@ public class PhotonVision extends SubsystemBase {
       drivetrain.addVisionMeasurement(
           estimatedPose.estimatedPose.toPose2d(),
           Utils.fpgaToCurrentTime(estimatedPose.timestampSeconds));
-
-      addedMeasurement = true;
     }
-    Logger.recordOutput("Vision/AddedMeasurement", addedMeasurement);
   }
 }

@@ -11,44 +11,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BlueLSideStartShoot"
+                  "pathName": "RSideStartToRefuel"
                 }
               },
               {
-                "type": "named",
+                "type": "parallel",
                 "data": {
-                  "name": "PrepareShoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BlueMBackToOutpost"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.5
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -61,7 +43,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BROutpostBackShoot"
+                  "pathName": "RRefuelToShoot"
                 }
               },
               {

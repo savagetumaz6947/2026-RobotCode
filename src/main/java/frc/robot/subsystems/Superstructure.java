@@ -69,7 +69,6 @@ public class Superstructure extends SubsystemBase {
             Commands.runOnce(() -> setState(SuperstructureState.INTAKE)),
             intakePivot.deploy(),
             intake.intake(),
-            conveyor.stop(),
             shooter.stopShooter())
         .withName("Superstructure_Intake");
   }
@@ -78,7 +77,8 @@ public class Superstructure extends SubsystemBase {
     return Commands.sequence(
             Commands.runOnce(() -> setState(SuperstructureState.INTAKE)),
             intakePivot.deploy(),
-            intake.intake().withTimeout(2),
+            Commands.parallel(
+                intake.intake().withTimeout(2), conveyor.goToShooter().withTimeout(1.5)),
             intake.stop())
         .withName("Superstructure_IntakeAuto");
   }
@@ -100,7 +100,7 @@ public class Superstructure extends SubsystemBase {
                 () ->
                     shooter.readyForHub()
                         || shooter.getVelocity() >= ShooterConstants.HUB_VELOCITY_RPS * 0.85),
-            conveyor.goToShooter())
+            Commands.parallel(intakePivot.stow(), conveyor.goToShooter()))
         .withName("Superstructure_Shoot");
   }
 
@@ -110,11 +110,12 @@ public class Superstructure extends SubsystemBase {
 
   public Command shootAuto() {
     return Commands.sequence(
-            intakePivot.stow(),
             Commands.runOnce(() -> setState(SuperstructureState.SHOOT)),
             Commands.waitUntil(shooter::readyForHub).withTimeout(0.5),
             Commands.parallel(
-                conveyor.goToShooter().withTimeout(3), intake.intake().withTimeout(2)),
+                intakePivot.stow(),
+                conveyor.goToShooter().withTimeout(3),
+                intake.intake().withTimeout(2)),
             Commands.parallel(conveyor.stop(), intake.stop(), shooter.stopShooter()))
         .withName("Superstructure_ShootAuto");
   }

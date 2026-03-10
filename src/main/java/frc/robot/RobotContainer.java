@@ -11,6 +11,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -49,6 +51,7 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final SendableChooser<Command> autoChooser;
@@ -76,6 +79,7 @@ public class RobotContainer {
                     TunerConstants.BackLeft,
                     TunerConstants.BackRight),
                 robotState);
+        swerveIO.setPose(allianceAdjustedPose(new Pose2d(4.0, 0.699, new Rotation2d())));
         break;
 
       case SIM:
@@ -89,7 +93,7 @@ public class RobotContainer {
                     TunerConstants.BackLeft,
                     TunerConstants.BackRight),
                 robotState);
-        swerveIO.setPose(new Pose2d(2, 2, new Rotation2d()));
+        swerveIO.setPose(allianceAdjustedPose(new Pose2d(10.0, 10.0, new Rotation2d())));
         break;
 
       default:
@@ -208,5 +212,20 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
+  }
+
+  /**
+   * Adjust a field pose for the current alliance. If we're on the Red alliance, mirror the pose
+   * across the field so coordinates become relative to the alliance side.
+   */
+  private Pose2d allianceAdjustedPose(Pose2d pose) {
+    var allianceOpt = DriverStation.getAlliance();
+    if (allianceOpt.isPresent() && allianceOpt.get() == DriverStation.Alliance.Red) {
+      double nx = Constants.FieldPoses.FIELD_LENGTH - pose.getX();
+      double ny = Constants.FieldPoses.FIELD_WIDTH - pose.getY();
+      Rotation2d nr = pose.getRotation().plus(new Rotation2d(Math.PI));
+      return new Pose2d(new Translation2d(nx, ny), nr);
+    }
+    return pose;
   }
 }
