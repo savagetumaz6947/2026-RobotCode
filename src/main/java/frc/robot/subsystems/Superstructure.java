@@ -77,8 +77,7 @@ public class Superstructure extends SubsystemBase {
     return Commands.sequence(
             Commands.runOnce(() -> setState(SuperstructureState.INTAKE)),
             intakePivot.deploy(),
-            Commands.parallel(
-                intake.intake().withTimeout(2), conveyor.goToShooter().withTimeout(1.5)),
+            intake.intake().withTimeout(2),
             intake.stop())
         .withName("Superstructure_IntakeAuto");
   }
