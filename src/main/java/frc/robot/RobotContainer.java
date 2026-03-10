@@ -10,6 +10,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -88,6 +89,7 @@ public class RobotContainer {
                     TunerConstants.BackLeft,
                     TunerConstants.BackRight),
                 robotState);
+        swerveIO.setPose(new Pose2d(2, 2, new Rotation2d()));
         break;
 
       default:
