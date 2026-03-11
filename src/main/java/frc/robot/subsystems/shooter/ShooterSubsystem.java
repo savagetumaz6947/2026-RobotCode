@@ -48,6 +48,18 @@ public class ShooterSubsystem extends SubsystemBase {
     return spinUpVelocity(ShooterConstants.PASS_VELOCITY_RPS);
   }
 
+  /**
+   * Spin up shooter based on a measured distance to the hub. This uses a simple linear
+   * interpolation between PASS_VELOCITY_RPS (close) and HUB_VELOCITY_RPS (far) over the
+   * DISTANCE_MIN_METERS..DISTANCE_MAX_METERS range. Values outside the range are clamped.
+   *
+   * @param distanceMeters Distance from the camera to the hub in meters.
+   * @return A command which applies the computed velocity while scheduled.
+   */
+  public Command spinUpForDistance(double distanceMeters) {
+    return run(() -> setVelocityForDistance(distanceMeters)).withName("ShooterSpinUpForDistance");
+  }
+
   /** Command to idle the shooter at a low speed */
   public Command idle() {
     return run(() -> setDutyCycle(ShooterConstants.IDLE_DUTY_CYCLE)).withName("ShooterIdle");
@@ -66,6 +78,35 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Sets a velocity target for the shooter (rotations per second). */
   public void setVelocity(double velocityRotPerSec) {
     io.setVelocity(velocityRotPerSec);
+  }
+
+  /**
+   * Compute a velocity target from a distance measurement and apply it to the shooter. Linear
+   * interpolation between PASS_VELOCITY_RPS (at DISTANCE_MIN_METERS) and HUB_VELOCITY_RPS (at
+   * DISTANCE_MAX_METERS).
+   *
+   * @param distanceMeters distance from camera to target (meters)
+   */
+  public void setVelocityForDistance(double distanceMeters) {
+    double minD = ShooterConstants.DISTANCE_MIN_METERS;
+    double maxD = ShooterConstants.DISTANCE_MAX_METERS;
+
+    // avoid division by zero
+    double t = 0.0;
+    if (maxD > minD) {
+      t = (distanceMeters - minD) / (maxD - minD);
+    }
+    // clamp 0..1
+    t = Math.max(0.0, Math.min(1.0, t));
+
+    double minV = ShooterConstants.PASS_VELOCITY_RPS;
+    double maxV = ShooterConstants.HUB_VELOCITY_RPS;
+    double targetV = minV + t * (maxV - minV);
+
+    // Apply computed velocity
+    setVelocity(targetV);
+    Logger.recordOutput("Shooter/TargetVelocityFromDistance", targetV);
+    Logger.recordOutput("Shooter/DistanceMeters", distanceMeters);
   }
 
   /** Gets the shooter motor velocity */

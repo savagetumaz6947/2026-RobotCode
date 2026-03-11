@@ -180,6 +180,12 @@ public final class Constants {
     public static final double VELOCITY_KD = 0.0;
     // Simple feedforward term (voltage fraction per RPS). Tune as needed.
     public static final double VELOCITY_KV = 0.15;
+
+    // Distance-to-velocity mapping (meters). When using vision to estimate distance to the
+    // hub, linearly interpolate between PASS and HUB velocity over this distance range.
+    // Tune these to match your robot and camera geometry.
+    public static final double DISTANCE_MIN_METERS = 0.7; // closest expected shooting distance
+    public static final double DISTANCE_MAX_METERS = 3.0; // farthest expected shooting distance
   }
 
   public static class IntakeConstants {
