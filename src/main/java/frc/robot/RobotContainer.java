@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.DriveAimingAtTarget;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.autoaim.AutoAimManager;
@@ -29,7 +30,6 @@ import frc.robot.subsystems.intakepivot.IntakePivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.shooterAngle.shooterAngleSubsystem;
 import frc.robot.subsystems.vision.PhotonVision;
-import frc.robot.commands.DriveAimingAtTarget;
 import frc.robot.util.sim.MapleSimSwerveDrivetrain;
 
 /**
@@ -176,30 +176,30 @@ public class RobotContainer {
     // Right trigger: Shoot while held, start conveyer when shooter ready (or near ready),
     // Return to idle when released
     controller.rightTrigger().whileTrue(superstructure.shoot()).onFalse(superstructure.intake());
-    operatorController.rightTrigger().whileTrue(
-      new DriveAimingAtTarget(
-          swerveIO,
-          () -> {
-            var alliance = DriverStation.getAlliance();
-            if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-              return Constants.FieldPoses.RED_AIM_TARGET;
-            }
-            return Constants.FieldPoses.BLUE_AIM_TARGET;
-          },
-          () -> {
-            double leftY =
-                edu.wpi.first.math.MathUtil.applyDeadband(
-                    -controller.getLeftY(),
-                    Constants.DriveConstants.JOYSTICK_DEADBAND);
-            return leftY * 2.0;
-          },
-          () -> {
-            double leftX =
-                edu.wpi.first.math.MathUtil.applyDeadband(
-                    -controller.getLeftX(),
-                    Constants.DriveConstants.JOYSTICK_DEADBAND);
-            return leftX * 2.0;
-    }));
+    operatorController
+        .rightTrigger()
+        .whileTrue(
+            new DriveAimingAtTarget(
+                swerveIO,
+                () -> {
+                  var alliance = DriverStation.getAlliance();
+                  if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+                    return Constants.FieldPoses.RED_AIM_TARGET;
+                  }
+                  return Constants.FieldPoses.BLUE_AIM_TARGET;
+                },
+                () -> {
+                  double leftY =
+                      edu.wpi.first.math.MathUtil.applyDeadband(
+                          -controller.getLeftY(), Constants.DriveConstants.JOYSTICK_DEADBAND);
+                  return leftY * 2.5;
+                },
+                () -> {
+                  double leftX =
+                      edu.wpi.first.math.MathUtil.applyDeadband(
+                          -controller.getLeftX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
+                  return leftX * 2.5;
+                }));
     // Left bumper: Climb up while held (top motor +0.2, bottom motor -0.2)
     controller.leftBumper().onTrue(superstructure.eject());
 
@@ -259,4 +259,3 @@ public class RobotContainer {
     return pose;
   }
 }
-
