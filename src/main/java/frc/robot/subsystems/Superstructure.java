@@ -86,8 +86,10 @@ public class Superstructure extends SubsystemBase {
   public Command intakePivotDeploy() {
     return Commands.parallel(
             Commands.runOnce(() -> setState(SuperstructureState.INTAKE)),
+            shooter.stopShooter(),
+            intake.stop(),
             intakePivot.deploy(),
-            shooter.stopShooter())
+            conveyor.stop())
         .withName("Superstructure_PivotDeploy");
   }
 
