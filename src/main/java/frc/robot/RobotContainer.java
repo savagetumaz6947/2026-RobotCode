@@ -154,8 +154,9 @@ public class RobotContainer {
                   edu.wpi.first.math.MathUtil.applyDeadband(
                       -controller.getRightX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
 
-              double vxMetersPerSec = leftY * 2.0; // Max 5 m/s
-              double vyMetersPerSec = leftX * 2.0;
+              double vxMetersPerSec = leftY * 2.5; // Max 5 m/s
+              double vyMetersPerSec = leftX * 2.5;
+
               double omegaRadPerSec = rightX * Math.PI; // Max PI rad/s
               swerveIO.driveFieldRelative(vxMetersPerSec, vyMetersPerSec, omegaRadPerSec);
             },
@@ -165,7 +166,7 @@ public class RobotContainer {
 
     // X button: Prepare to shoot (spin up shooter, stow intake)
     controller.x().onTrue(superstructure.prepareShoot());
-
+    
     // Right trigger: Shoot while held, start conveyer when shooter ready (or near ready),
     // Return to idle when released
     controller.rightTrigger().whileTrue(superstructure.shoot()).onFalse(superstructure.intake());

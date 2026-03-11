@@ -62,6 +62,14 @@ public class IntakePivotSubsystem extends SubsystemBase {
         .withName("IntakePivotStow");
   }
 
+  public Command stowFully() {
+    return runOnce(
+            () -> {
+              io.setPosition(IntakePivotConstants.FULLY_STOWED_POSITION);
+            })
+        .withName("IntakePivotStowFully");
+  }
+
   /** Get current pivot position in rotations (from right motor) */
   public double getPosition() {
     return inputs.rightPositionRotations;
@@ -81,6 +89,10 @@ public class IntakePivotSubsystem extends SubsystemBase {
   /** Check if intake is stowed */
   public boolean isStowed() {
     return atPosition(IntakePivotConstants.STOWED_POSITION);
+  }
+
+  public boolean isFullyStowed() {
+    return atPosition(IntakePivotConstants.FULLY_STOWED_POSITION);
   }
 
   /** Immediately stop the pivot motor */

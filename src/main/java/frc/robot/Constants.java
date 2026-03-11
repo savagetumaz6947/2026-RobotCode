@@ -83,7 +83,7 @@ public final class Constants {
       new PhotonVisionCamera(
           "PhotonCamera",
           new Transform3d(
-              new Translation3d(0, 0.08, 0.55), new Rotation3d(0.0, Math.toRadians(13), 0.0))),
+              new Translation3d(0, 0.08, 0.55), new Rotation3d(0.0, Math.toRadians(0), 0))),
     };
 
     // The layout of the AprilTags on the field
@@ -164,22 +164,22 @@ public final class Constants {
 
     // Shooter duty cycle presets (-1.0 to 1.0)
     public static final double IDLE_DUTY_CYCLE = 0.0;
-    public static final double HUB_DUTY_CYCLE = 0.7;
+    public static final double HUB_DUTY_CYCLE = 0.5;
     public static final double PASS_DUTY_CYCLE = 0.3;
 
     // Velocity control (rotations per second) and PID gains
     // Increase hub velocity to a higher placeholder (tune on robot). Be careful: high values
     // can draw a lot of current. This is intentionally high per request; reduce if needed.
-    public static final double HUB_VELOCITY_RPS = 100.0; // rotations per second (placeholder)
+    public static final double HUB_VELOCITY_RPS = 70.0; // rotations per second (placeholder)
     public static final double PASS_VELOCITY_RPS = 20.0; // placeholder
     public static final double VELOCITY_TOLERANCE_RPS = 2.0; // acceptable error
 
     // PID gains for velocity closed-loop on Shooter (applied to duty cycle output)
-    public static final double VELOCITY_KP = 0.18;
+    public static final double VELOCITY_KP = 0.10;
     public static final double VELOCITY_KI = 0.0;
     public static final double VELOCITY_KD = 0.0;
     // Simple feedforward term (voltage fraction per RPS). Tune as needed.
-    public static final double VELOCITY_KV = 0.3;
+    public static final double VELOCITY_KV = 0.15;
   }
 
   public static class IntakeConstants {
@@ -239,7 +239,8 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
     // Position setpoints (in rotations)
-    public static final double STOWED_POSITION = 2.7; // Stowed/up position
+    public static final double FULLY_STOWED_POSITION = 0.0; // Fully stowed position (reference/zero)
+    public static final double STOWED_POSITION = 2.7; // Half Stowed/up position
     public static final double DEPLOYED_POSITION = 5.4; // Extended/down position for intaking
 
     // Position tolerance

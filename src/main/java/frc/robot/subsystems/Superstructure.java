@@ -73,6 +73,24 @@ public class Superstructure extends SubsystemBase {
         .withName("Superstructure_Intake");
   }
 
+  public Command intakeFullyStow() {
+    return Commands.parallel(
+            Commands.runOnce(() -> setState(SuperstructureState.IDLE)),
+            shooter.stopShooter(),
+            intake.stop(),
+            intakePivot.stowFully(),
+            conveyor.stop())
+        .withName("Superstructure_IntakeFullyStow");
+  }
+
+  public Command intakePivotDeploy() {
+    return Commands.parallel(
+            Commands.runOnce(() -> setState(SuperstructureState.INTAKE)),
+            intakePivot.deploy(),
+            shooter.stopShooter())
+        .withName("Superstructure_PivotDeploy");
+  }
+
   public Command intakeAuto() {
     return Commands.sequence(
             Commands.runOnce(() -> setState(SuperstructureState.INTAKE)),
@@ -120,8 +138,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command eject() {
-    return Commands.parallel(
-            intakePivot.deploy(), intake.outtake(), conveyor.goToBucket(), shooter.stopShooter())
+    return Commands.parallel(intakePivot.deploy(), intake.outtake(), shooter.stopShooter())
         .withName("Superstructure_Eject");
   }
 
