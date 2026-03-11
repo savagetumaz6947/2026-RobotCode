@@ -29,6 +29,7 @@ import frc.robot.subsystems.intakepivot.IntakePivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.shooterAngle.shooterAngleSubsystem;
 import frc.robot.subsystems.vision.PhotonVision;
+import frc.robot.commands.DriveAimingAtTarget;
 import frc.robot.util.sim.MapleSimSwerveDrivetrain;
 
 /**
@@ -176,9 +177,6 @@ public class RobotContainer {
     // Return to idle when released
     controller.rightTrigger().whileTrue(superstructure.shoot()).onFalse(superstructure.intake());
 
-    operatorController.rightTrigger().onTrue(autoAimManager.autoAimAtField(swerveIO::getPose));
-    operatorController.leftTrigger().onTrue(superstructure.intakeFullyStow());
-
     // Left bumper: Climb up while held (top motor +0.2, bottom motor -0.2)
     controller.leftBumper().onTrue(superstructure.eject());
 
@@ -238,3 +236,4 @@ public class RobotContainer {
     return pose;
   }
 }
+

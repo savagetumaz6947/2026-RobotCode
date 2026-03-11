@@ -38,14 +38,6 @@ public class DriveAimingAtTarget extends Command {
   private double previousTargetHeading = 0.0;
   private long previousTime = System.nanoTime();
 
-  /**
-   * Creates a new DriveAimingAtTarget command.
-   *
-   * @param drive The swerve drivetrain subsystem
-   * @param targetSupplier Supplier for the target position to aim at (e.g., hub coordinates)
-   * @param xSupplier Supplier for X velocity (forward/backward) from joystick
-   * @param ySupplier Supplier for Y velocity (left/right) from joystick
-   */
   public DriveAimingAtTarget(
       DriveSwerveDrivetrain drive,
       Supplier<Translation3d> targetSupplier,
