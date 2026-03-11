@@ -176,8 +176,33 @@ public class RobotContainer {
     // Right trigger: Shoot while held, start conveyer when shooter ready (or near ready),
     // Return to idle when released
     controller.rightTrigger().whileTrue(superstructure.shoot()).onFalse(superstructure.intake());
+
     operatorController
         .rightTrigger()
+        .whileTrue(
+            new DriveAimingAtTarget(
+                swerveIO,
+                () -> {
+                  var alliance = DriverStation.getAlliance();
+                  if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+                    return Constants.FieldPoses.RED_AIM_TARGET;
+                  }
+                  return Constants.FieldPoses.BLUE_AIM_TARGET;
+                },
+                () -> {
+                  double leftY =
+                      edu.wpi.first.math.MathUtil.applyDeadband(
+                          -controller.getLeftY(), Constants.DriveConstants.JOYSTICK_DEADBAND);
+                  return leftY * 2.5;
+                },
+                () -> {
+                  double leftX =
+                      edu.wpi.first.math.MathUtil.applyDeadband(
+                          -controller.getLeftX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
+                  return leftX * 2.5;
+                }));
+    controller
+        .leftTrigger()
         .whileTrue(
             new DriveAimingAtTarget(
                 swerveIO,
