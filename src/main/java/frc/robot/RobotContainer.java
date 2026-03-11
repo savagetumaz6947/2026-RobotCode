@@ -27,7 +27,9 @@ import frc.robot.subsystems.drive.DriveSwerveDrivetrain;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intakepivot.IntakePivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.shooterAngle.shooterAngleSubsystem;
 import frc.robot.subsystems.vision.PhotonVision;
+import frc.robot.subsystems.autoaim.AutoAimManager;
 import frc.robot.util.sim.MapleSimSwerveDrivetrain;
 
 /**
@@ -46,7 +48,9 @@ public class RobotContainer {
   private final IntakePivotSubsystem intakePivot;
   private final ShooterSubsystem shooter;
   private final ConveyorSubsystem conveyor;
+  private final shooterAngleSubsystem shooterAngle;
   private final PhotonVision vision;
+  private final AutoAimManager autoAimManager;
   private final Superstructure superstructure;
 
   // Controller
@@ -116,6 +120,8 @@ public class RobotContainer {
     intakePivot = IntakePivotSubsystem.getInstance();
     conveyor = ConveyorSubsystem.getInstance();
     shooter = ShooterSubsystem.getInstance();
+    shooterAngle = shooterAngleSubsystem.getInstance();
+    autoAimManager = new AutoAimManager(shooterAngle);
 
     // Initialize superstructure
     superstructure = new Superstructure(shooter, intake, intakePivot, conveyor);
@@ -166,10 +172,13 @@ public class RobotContainer {
 
     // X button: Prepare to shoot (spin up shooter, stow intake)
     controller.x().onTrue(superstructure.prepareShoot());
-    
+
     // Right trigger: Shoot while held, start conveyer when shooter ready (or near ready),
     // Return to idle when released
     controller.rightTrigger().whileTrue(superstructure.shoot()).onFalse(superstructure.intake());
+
+    operatorController.rightTrigger().onTrue(autoAimManager.autoAimAtField(swerveIO::getPose));
+    operatorController.leftTrigger().onTrue(superstructure.intakeFullyStow());
 
     // Left bumper: Climb up while held (top motor +0.2, bottom motor -0.2)
     controller.leftBumper().onTrue(superstructure.eject());
@@ -223,7 +232,7 @@ public class RobotContainer {
     var allianceOpt = DriverStation.getAlliance();
     if (allianceOpt.isPresent() && allianceOpt.get() == DriverStation.Alliance.Red) {
       double nx = Constants.FieldPoses.FIELD_LENGTH - pose.getX();
-      double ny = Constants.FieldPoses.FIELD_WIDTH - pose.getY();
+      double ny = pose.getY();
       Rotation2d nr = pose.getRotation().plus(new Rotation2d(Math.PI));
       return new Pose2d(new Translation2d(nx, ny), nr);
     }

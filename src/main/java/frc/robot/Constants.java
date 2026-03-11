@@ -239,7 +239,8 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
     // Position setpoints (in rotations)
-    public static final double FULLY_STOWED_POSITION = 0.0; // Fully stowed position (reference/zero)
+    public static final double FULLY_STOWED_POSITION =
+        0.0; // Fully stowed position (reference/zero)
     public static final double STOWED_POSITION = 2.7; // Half Stowed/up position
     public static final double DEPLOYED_POSITION = 5.4; // Extended/down position for intaking
 
