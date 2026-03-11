@@ -11,7 +11,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.autoaim.AutoAimManager;
 import frc.robot.subsystems.conveyor.ConveyorSubsystem;
 import frc.robot.subsystems.drive.DriveIOHardware;
 import frc.robot.subsystems.drive.DriveIOSim;
@@ -29,7 +29,6 @@ import frc.robot.subsystems.intakepivot.IntakePivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.shooterAngle.shooterAngleSubsystem;
 import frc.robot.subsystems.vision.PhotonVision;
-import frc.robot.subsystems.autoaim.AutoAimManager;
 import frc.robot.util.sim.MapleSimSwerveDrivetrain;
 
 /**
@@ -234,7 +233,7 @@ public class RobotContainer {
       double nx = Constants.FieldPoses.FIELD_LENGTH - pose.getX();
       double ny = pose.getY();
       Rotation2d nr = pose.getRotation().plus(new Rotation2d(Math.PI));
-      return new Pose2d(new Translation2d(nx, ny), nr);
+      return new Pose2d(nx, ny, nr);
     }
     return pose;
   }

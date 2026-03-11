@@ -56,13 +56,19 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "RRefuelReturn"
+          }
+        },
+        {
           "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "RRefuelToShoot"
+                  "pathName": "RReturnToShoot"
                 }
               },
               {

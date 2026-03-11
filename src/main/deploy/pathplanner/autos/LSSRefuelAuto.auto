@@ -49,13 +49,19 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "LRefuelReturn"
+          }
+        },
+        {
           "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LRefuelToShoot"
+                  "pathName": "LReturnToShoot"
                 }
               },
               {
