@@ -170,16 +170,16 @@ public final class Constants {
     // Velocity control (rotations per second) and PID gains
     // Increase hub velocity to a higher placeholder (tune on robot). Be careful: high values
     // can draw a lot of current. This is intentionally high per request; reduce if needed.
-    public static final double HUB_VELOCITY_RPS = 70.0; // rotations per second (placeholder)
+    public static final double HUB_VELOCITY_RPS = 90.0; // rotations per second (placeholder)
     public static final double PASS_VELOCITY_RPS = 20.0; // placeholder
     public static final double VELOCITY_TOLERANCE_RPS = 2.0; // acceptable error
 
     // PID gains for velocity closed-loop on Shooter (applied to duty cycle output)
-    public static final double VELOCITY_KP = 0.10;
+    public static final double VELOCITY_KP = 0.2;
     public static final double VELOCITY_KI = 0.0;
     public static final double VELOCITY_KD = 0.0;
     // Simple feedforward term (voltage fraction per RPS). Tune as needed.
-    public static final double VELOCITY_KV = 0.15;
+    public static final double VELOCITY_KV = 0.2;
 
     // Distance-to-velocity mapping (meters). When using vision to estimate distance to the
     // hub, linearly interpolate between PASS and HUB velocity over this distance range.
