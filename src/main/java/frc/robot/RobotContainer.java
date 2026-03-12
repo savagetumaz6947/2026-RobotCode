@@ -11,6 +11,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -160,8 +161,8 @@ public class RobotContainer {
                   edu.wpi.first.math.MathUtil.applyDeadband(
                       -controller.getRightX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
 
-              double vxMetersPerSec = leftY * 2.5; // Max 5 m/s
-              double vyMetersPerSec = leftX * 2.5;
+              double vxMetersPerSec = leftY * 2.0; // Max 5 m/s
+              double vyMetersPerSec = leftX * 2.0;
 
               double omegaRadPerSec = rightX * Math.PI; // Max PI rad/s
               swerveIO.driveFieldRelative(vxMetersPerSec, vyMetersPerSec, omegaRadPerSec);
@@ -172,13 +173,17 @@ public class RobotContainer {
 
     // X button: Prepare to shoot (spin up shooter, stow intake)
     controller.x().onTrue(superstructure.prepareShoot());
-
+    operatorController.leftBumper().onTrue(superstructure.prepareShoot());
     // Right trigger: Shoot while held, start conveyer when shooter ready (or near ready),
     // Return to idle when released
     controller.rightTrigger().whileTrue(superstructure.shoot()).onFalse(superstructure.intake());
-
     operatorController
         .rightTrigger()
+        .whileTrue(superstructure.shoot())
+        .onFalse(superstructure.idle());
+
+    operatorController
+        .leftTrigger()
         .whileTrue(
             new DriveAimingAtTarget(
                 swerveIO,
@@ -193,14 +198,15 @@ public class RobotContainer {
                   double leftY =
                       edu.wpi.first.math.MathUtil.applyDeadband(
                           -controller.getLeftY(), Constants.DriveConstants.JOYSTICK_DEADBAND);
-                  return leftY * 2.5;
+                  return leftY * 2.0;
                 },
                 () -> {
                   double leftX =
                       edu.wpi.first.math.MathUtil.applyDeadband(
                           -controller.getLeftX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
-                  return leftX * 2.5;
+                  return leftX * 2.0;
                 }));
+
     controller
         .leftTrigger()
         .whileTrue(
@@ -217,14 +223,15 @@ public class RobotContainer {
                   double leftY =
                       edu.wpi.first.math.MathUtil.applyDeadband(
                           -controller.getLeftY(), Constants.DriveConstants.JOYSTICK_DEADBAND);
-                  return leftY * 2.5;
+                  return leftY * 2.0;
                 },
                 () -> {
                   double leftX =
                       edu.wpi.first.math.MathUtil.applyDeadband(
                           -controller.getLeftX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
-                  return leftX * 2.5;
+                  return leftX * 2.0;
                 }));
+
     // Left bumper: Climb up while held (top motor +0.2, bottom motor -0.2)
     controller.leftBumper().onTrue(superstructure.eject());
 
@@ -256,6 +263,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", superstructure.intakeAuto());
     NamedCommands.registerCommand("PrepareShoot", superstructure.prepareShootAuto());
     NamedCommands.registerCommand("Shoot", superstructure.shootAuto());
+    NamedCommands.registerCommand("Shoot2", superstructure.shootAuto2());
     NamedCommands.registerCommand("Eject", superstructure.eject());
     NamedCommands.registerCommand("Idle", superstructure.idle());
   }
@@ -277,9 +285,9 @@ public class RobotContainer {
     var allianceOpt = DriverStation.getAlliance();
     if (allianceOpt.isPresent() && allianceOpt.get() == DriverStation.Alliance.Red) {
       double nx = Constants.FieldPoses.FIELD_LENGTH - pose.getX();
-      double ny = pose.getY();
+      double ny = Constants.FieldPoses.FIELD_WIDTH - pose.getY();
       Rotation2d nr = pose.getRotation().plus(new Rotation2d(Math.PI));
-      return new Pose2d(nx, ny, nr);
+      return new Pose2d(new Translation2d(nx, ny), nr);
     }
     return pose;
   }

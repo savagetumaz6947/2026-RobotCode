@@ -139,6 +139,16 @@ public class Superstructure extends SubsystemBase {
         .withName("Superstructure_ShootAuto");
   }
 
+  public Command shootAuto2() {
+    return Commands.sequence(
+            Commands.runOnce(() -> setState(SuperstructureState.SHOOT)),
+            Commands.waitUntil(shooter::readyForHub).withTimeout(0.5),
+            Commands.parallel(
+                conveyor.goToShooter().withTimeout(3), intake.intake().withTimeout(2)),
+            Commands.parallel(conveyor.stop(), intake.stop(), shooter.stopShooter()))
+        .withName("Superstructure_ShootAuto2");
+  }
+
   public Command eject() {
     return Commands.parallel(intakePivot.deploy(), intake.outtake(), shooter.stopShooter())
         .withName("Superstructure_Eject");
