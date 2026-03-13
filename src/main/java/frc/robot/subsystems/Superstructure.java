@@ -98,7 +98,7 @@ public class Superstructure extends SubsystemBase {
             Commands.waitUntil(
                 () ->
                     shooter.readyForHub()
-                        || shooter.getVelocity() >= ShooterConstants.HUB_VELOCITY_RPS * 0.85),
+                        || shooter.getVelocity() >= ShooterConstants.HUB_VELOCITY_RPS * 0.5),
             Commands.parallel(intakePivot.stow(), conveyor.goToShooter()))
         .withName("Superstructure_Shoot");
   }
