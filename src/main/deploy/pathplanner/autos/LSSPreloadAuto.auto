@@ -11,57 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BlueLSideStartShoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "PrepareShoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BlueMBackToOutpost"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.5
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "BROutpostBackShoot"
+                  "pathName": "LSideStartShoot"
                 }
               },
               {

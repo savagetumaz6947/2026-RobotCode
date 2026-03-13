@@ -9,6 +9,12 @@
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": "LSideStartShoot"
+                }
+              },
+              {
                 "type": "named",
                 "data": {
                   "name": "PrepareShoot"
@@ -18,6 +24,19 @@
                 "type": "named",
                 "data": {
                   "name": "Shoot2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LShootToTrench"
                 }
               },
               {
@@ -34,15 +53,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "LRefuel"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LRefuel"
                 }
               }
             ]

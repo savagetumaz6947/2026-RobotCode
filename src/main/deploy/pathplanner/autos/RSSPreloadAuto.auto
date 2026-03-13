@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BlueRSideStartShoot"
+                  "pathName": "RSideStartShoot"
                 }
               },
               {
@@ -32,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueRBackToOutpost"
+            "pathName": "RBackToOutpost"
           }
         },
         {
@@ -61,7 +61,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BROutpostBackShoot"
+                  "pathName": "ROutpostBackShoot"
                 }
               },
               {
