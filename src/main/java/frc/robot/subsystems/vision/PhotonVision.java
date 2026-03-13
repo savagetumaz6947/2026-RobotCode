@@ -9,9 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -147,18 +145,9 @@ public class PhotonVision extends SubsystemBase {
       EstimatedRobotPose estimatedPose = visionEst.get();
       Logger.recordOutput("Vision/EstimatedPose", estimatedPose.estimatedPose);
 
-      // If we're on the Red alliance, mirror the estimated field pose so it matches the
-      // rest of the codebase which (in some places) expects alliance-relative poses.
+      // PhotonVision already returns poses in blue-origin field coordinates (WPILib standard).
+      // CTRE's pose estimator also works in blue-origin coordinates. No alliance flipping needed.
       var pose2d = estimatedPose.estimatedPose.toPose2d();
-      if (DriverStation.getAlliance().isPresent()
-          && DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
-              == DriverStation.Alliance.Red) {
-        double nx = frc.robot.Constants.FieldPoses.FIELD_LENGTH - pose2d.getX();
-        double ny = frc.robot.Constants.FieldPoses.FIELD_WIDTH - pose2d.getY();
-        var nr = pose2d.getRotation().plus(new Rotation2d(Math.PI));
-        pose2d = new Pose2d(new Translation2d(nx, ny), nr);
-        Logger.recordOutput("Vision/AppliedAllianceMirror", true);
-      }
 
       drivetrain.addVisionMeasurement(
           pose2d, Utils.fpgaToCurrentTime(estimatedPose.timestampSeconds));
