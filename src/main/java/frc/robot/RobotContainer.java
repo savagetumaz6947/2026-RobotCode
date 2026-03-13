@@ -205,12 +205,18 @@ public class RobotContainer {
                   double leftY =
                       edu.wpi.first.math.MathUtil.applyDeadband(
                           -controller.getLeftY(), Constants.DriveConstants.JOYSTICK_DEADBAND);
+                  if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+                    leftY = -leftY;
+                  }
                   return leftY * 2.0;
                 },
                 () -> {
                   double leftX =
                       edu.wpi.first.math.MathUtil.applyDeadband(
                           -controller.getLeftX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
+                  if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+                    leftX = -leftX;
+                  }
                   return leftX * 2.0;
                 }));
 
@@ -230,12 +236,18 @@ public class RobotContainer {
                   double leftY =
                       edu.wpi.first.math.MathUtil.applyDeadband(
                           -controller.getLeftY(), Constants.DriveConstants.JOYSTICK_DEADBAND);
+                  if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+                    leftY = -leftY; // Invert forward/backward for Red alliance
+                  }
                   return leftY * 2.0;
                 },
                 () -> {
                   double leftX =
                       edu.wpi.first.math.MathUtil.applyDeadband(
                           -controller.getLeftX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
+                  if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+                    leftX = -leftX; // Invert left/right for Red alliance
+                  }
                   return leftX * 2.0;
                 }));
 
