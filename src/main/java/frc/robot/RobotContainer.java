@@ -168,8 +168,8 @@ public class RobotContainer {
                 leftX = -leftX;
               }
 
-              double vxMetersPerSec = leftY * 2.0; // Max 5 m/s
-              double vyMetersPerSec = leftX * 2.0;
+              double vxMetersPerSec = leftY * 3.0; // Max 5 m/s
+              double vyMetersPerSec = leftX * 3.0;
 
               double omegaRadPerSec = rightX * Math.PI; // Max PI rad/s
               swerveIO.driveFieldRelative(vxMetersPerSec, vyMetersPerSec, omegaRadPerSec);
@@ -208,7 +208,7 @@ public class RobotContainer {
                   if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
                     leftY = -leftY;
                   }
-                  return leftY * 2.0;
+                  return leftY * 3.0;
                 },
                 () -> {
                   double leftX =
@@ -217,38 +217,7 @@ public class RobotContainer {
                   if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
                     leftX = -leftX;
                   }
-                  return leftX * 2.0;
-                }));
-
-    controller
-        .leftTrigger()
-        .whileTrue(
-            new DriveAimingAtTarget(
-                swerveIO,
-                () -> {
-                  var alliance = DriverStation.getAlliance();
-                  if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-                    return Constants.FieldPoses.RED_AIM_TARGET;
-                  }
-                  return Constants.FieldPoses.BLUE_AIM_TARGET;
-                },
-                () -> {
-                  double leftY =
-                      edu.wpi.first.math.MathUtil.applyDeadband(
-                          -controller.getLeftY(), Constants.DriveConstants.JOYSTICK_DEADBAND);
-                  if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
-                    leftY = -leftY; // Invert forward/backward for Red alliance
-                  }
-                  return leftY * 2.0;
-                },
-                () -> {
-                  double leftX =
-                      edu.wpi.first.math.MathUtil.applyDeadband(
-                          -controller.getLeftX(), Constants.DriveConstants.JOYSTICK_DEADBAND);
-                  if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
-                    leftX = -leftX; // Invert left/right for Red alliance
-                  }
-                  return leftX * 2.0;
+                  return leftX * 3.0;
                 }));
 
     // Left bumper: Climb up while held (top motor +0.2, bottom motor -0.2)
